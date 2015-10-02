@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.maverick.vfs.rfbftp.RFBFTPFileProvider">
+		<scheme name="rfbftp" />
+        <if-available class-name="com.sshtools.rfb.RFBProtocolTransport"/>
+	</provider>
+</providers>
