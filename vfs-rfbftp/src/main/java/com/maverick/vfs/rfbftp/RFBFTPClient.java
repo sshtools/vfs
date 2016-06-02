@@ -2,8 +2,8 @@ package com.maverick.vfs.rfbftp;
 
 import java.io.IOException;
 
-import com.sshtools.profile.AuthenticationException;
 import com.sshtools.rfb.DummyDisplay;
+import com.sshtools.rfb.RFBAuthenticationException;
 import com.sshtools.rfb.RFBContext;
 import com.sshtools.rfb.RFBDisplay;
 import com.sshtools.rfb.RFBEventHandler;
@@ -24,7 +24,7 @@ public class RFBFTPClient {
 	}
 
 	public RFBFTPClient(RFBContext context, String hostname, int port,
-			RFBEventHandler events) throws IOException, AuthenticationException {
+			RFBEventHandler events) throws IOException, RFBAuthenticationException {
 		transport = new RFBSocketTransport(hostname, port);
 		display = new DummyDisplay(context);
 		System.out.println("Initialising session");
