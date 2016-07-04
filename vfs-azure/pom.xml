@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>Azure Commons VFS Provider</name>
+	<description>An Azure Commons VFS provider.</description>
+	<artifactId>vfs-azure</artifactId>
+	<parent>
+		<groupId>com.sshtools</groupId>
+		<artifactId>vfs</artifactId>
+		<version>2.1.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<outputDirectory>target/classes</outputDirectory>
+		<testOutputDirectory>target/test-classes</testOutputDirectory>
+		<finalName>${project.artifactId}</finalName>
+		<resources>
+			<resource>
+				<targetPath>.</targetPath>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<targetPath>.</targetPath>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.nativelibs4java</groupId>
+				<artifactId>maven-jnaerator-plugin</artifactId>
+				<version>0.12-SNAPSHOT</version>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging-api</artifactId>
+			<version>1.0.4</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.azure</groupId>
+			<artifactId>azure-storage</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+			<version>${commonsVFSVersion}</version>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>sonatype</id>
+			<name>Sonatype OSS Snapshots Repository</name>
+			<url>http://oss.sonatype.org/content/groups/public</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype</id>
+			<name>Sonatype OSS Snapshots Repository</name>
+			<url>http://oss.sonatype.org/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

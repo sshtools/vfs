@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.azure.AzureFileProvider">
+		<scheme name="azure" />
+        <if-available class-name="com.microsoft.azure.storage.ServiceClient"/>
+	</provider>
+</providers>
