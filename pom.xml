@@ -4,7 +4,7 @@
 	<properties>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<maven.compiler.source>1.6</maven.compiler.source>
-		<commonsVFSVersion>2.0</commonsVFSVersion>
+		<commonsVFSVersion>2.1-NAM-SNAPSHOT</commonsVFSVersion>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
