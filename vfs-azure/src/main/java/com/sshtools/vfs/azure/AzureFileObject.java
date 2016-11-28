@@ -30,7 +30,7 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.blob.CloudPageBlob;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 
-public class AzureFileObject extends AbstractFileObject {
+public class AzureFileObject extends AbstractFileObject<AzureFileSystem> {
 	public final static int DEFAULT_BLOB_SIZE = 1024;
 	public final static int DEFAULT_BLOB_INCREMENT = 1024;
 
