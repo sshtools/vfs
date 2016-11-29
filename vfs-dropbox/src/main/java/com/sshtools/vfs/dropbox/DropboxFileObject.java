@@ -46,13 +46,14 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 
 /**
- * An FTP file.
+ * A Dropbox file.
  *
  * @author <a href="http://commons.apache.org/vfs/team-list.html">Commons VFS
  *         team</a>
  */
-public class DropboxFileObject extends AbstractFileObject {
-	private static final Map<String, Metadata> EMPTY_FTP_FILE_MAP = Collections.unmodifiableMap(new TreeMap<String, Metadata>());
+public class DropboxFileObject extends AbstractFileObject<DropboxFileSystem> {
+	private static final Map<String, Metadata> EMPTY_FTP_FILE_MAP = Collections
+			.unmodifiableMap(new TreeMap<String, Metadata>());
 	private final Log log = LogFactory.getLog(DropboxFileObject.class);
 	private final DropboxFileSystem dbxFs;
 	private final String relPath;
@@ -62,10 +63,9 @@ public class DropboxFileObject extends AbstractFileObject {
 	private Map<String, Metadata> children;
 	private boolean inRefresh;
 
-	protected DropboxFileObject(final AbstractFileName name, final DropboxFileSystem fileSystem, final FileName rootName)
-			throws FileSystemException {
+	protected DropboxFileObject(final AbstractFileName name, final DropboxFileSystem fileSystem,
+			final FileName rootName) throws FileSystemException {
 		super(name, fileSystem);
-		// System.out.println("file "+name+" root "+rootName);
 		dbxFs = fileSystem;
 		String relPath = UriParser.decode(rootName.getRelativeName(name));
 		{
@@ -76,8 +76,10 @@ public class DropboxFileObject extends AbstractFileObject {
 	/**
 	 * Called by child file objects, to locate their ftp file info.
 	 *
-	 * @param name the filename in its native form ie. without uri stuff (%nn)
-	 * @param flush recreate children cache
+	 * @param name
+	 *            the filename in its native form ie. without uri stuff (%nn)
+	 * @param flush
+	 *            recreate children cache
 	 */
 	private Metadata getChildFile(final String name, final boolean flush) throws IOException {
 		/*
@@ -169,7 +171,8 @@ public class DropboxFileObject extends AbstractFileObject {
 	}
 
 	/**
-	 * @throws FileSystemException if an error occurs.
+	 * @throws FileSystemException
+	 *             if an error occurs.
 	 */
 	@Override
 	public void refresh() throws FileSystemException {
@@ -272,7 +275,8 @@ public class DropboxFileObject extends AbstractFileObject {
 	 * Returns the file's list of children.
 	 *
 	 * @return The list of children
-	 * @throws FileSystemException If there was a problem listing children
+	 * @throws FileSystemException
+	 *             If there was a problem listing children
 	 * @see AbstractFileObject#getChildren()
 	 * @since 2.0
 	 */
@@ -366,7 +370,8 @@ public class DropboxFileObject extends AbstractFileObject {
 				dbxFs.putClient(ftpClient);
 			}
 			if (!ok) {
-				throw new FileSystemException("vfs.provider.ftp/rename-file.error", new Object[] { getName().toString(), newfile });
+				throw new FileSystemException("vfs.provider.ftp/rename-file.error",
+						new Object[] { getName().toString(), newfile });
 			}
 			this.fileInfo = null;
 			this.fileType = FileType.IMAGINARY;

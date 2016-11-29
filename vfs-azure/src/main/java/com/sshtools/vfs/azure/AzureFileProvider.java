@@ -38,8 +38,6 @@ public class AzureFileProvider extends AbstractOriginatingFileProvider {
 		return defaultOptions;
 	}
 
-	private CloudBlobClient service;
-
 	private Log logger = LogFactory.getLog(AzureFileProvider.class);
 
 	public AzureFileProvider() {
@@ -51,41 +49,40 @@ public class AzureFileProvider extends AbstractOriginatingFileProvider {
 			throws FileSystemException {
 
 		FileSystemOptions fsOptions = fileSystemOptions != null ? fileSystemOptions : getDefaultFileSystemOptions();
-		if (service == null) {
-			UserAuthenticationData authData = null;
-			try {
-				authData = UserAuthenticatorUtils.authenticate(fsOptions, AUTHENTICATOR_TYPES);
+		UserAuthenticationData authData = null;
+		CloudBlobClient service;
+		try {
+			authData = UserAuthenticatorUtils.authenticate(fsOptions, AUTHENTICATOR_TYPES);
 
-				logger.info("Initialize Azure client");
+			logger.info("Initialize Azure client");
 
-				String account = UserAuthenticatorUtils
-						.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.USERNAME, null));
+			String account = UserAuthenticatorUtils
+					.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.USERNAME, null));
 
-				if (account == null || account.length() == 0)
-					account = ((GenericFileName) fileName).getUserName();
+			if (account == null || account.length() == 0)
+				account = ((GenericFileName) fileName).getUserName();
 
-				String key = UserAuthenticatorUtils
-						.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.PASSWORD, null));
+			String key = UserAuthenticatorUtils
+					.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.PASSWORD, null));
 
-				if (key == null || key.length() == 0)
-					key = ((GenericFileName) fileName).getPassword();
+			if (key == null || key.length() == 0)
+				key = ((GenericFileName) fileName).getPassword();
 
-				if (account == null || key == null || account.length() + key.length() == 0) {
-					throw new FileSystemException("Empty credentials");
-				}
-				String storageConnectionString = String
-						.format("DefaultEndpointsProtocol=http;AccountName=%s;AccountKey=%s", account, key);
-				CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
-
-				service = storageAccount.createCloudBlobClient();
-
-			} catch (InvalidKeyException e) {
-				throw new FileSystemException(e.getMessage(), e);
-			} catch (URISyntaxException e) {
-				throw new FileSystemException(e.getMessage(), e);
-			} finally {
-				UserAuthenticatorUtils.cleanup(authData);
+			if (account == null || key == null || account.length() + key.length() == 0) {
+				throw new FileSystemException("Empty credentials");
 			}
+			String storageConnectionString = String.format("DefaultEndpointsProtocol=http;AccountName=%s;AccountKey=%s",
+					account, key);
+			CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
+
+			service = storageAccount.createCloudBlobClient();
+
+		} catch (InvalidKeyException e) {
+			throw new FileSystemException(e.getMessage(), e);
+		} catch (URISyntaxException e) {
+			throw new FileSystemException(e.getMessage(), e);
+		} finally {
+			UserAuthenticatorUtils.cleanup(authData);
 		}
 
 		return new AzureFileSystem((AzureFileName) fileName, service, fsOptions);

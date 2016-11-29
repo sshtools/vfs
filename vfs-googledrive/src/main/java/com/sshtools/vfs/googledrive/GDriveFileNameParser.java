@@ -1,4 +1,4 @@
-package com.sshtools.vfs.azure;
+package com.sshtools.vfs.googledrive;
 
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileSystemException;
@@ -7,15 +7,15 @@ import org.apache.commons.vfs2.provider.HostFileNameParser;
 import org.apache.commons.vfs2.provider.UriParser;
 import org.apache.commons.vfs2.provider.VfsComponentContext;
 
-public class AzureFileNameParser extends HostFileNameParser {
+public class GDriveFileNameParser extends HostFileNameParser {
 
-	private static final AzureFileNameParser instance = new AzureFileNameParser();
+	private static final GDriveFileNameParser instance = new GDriveFileNameParser();
 
-	public static AzureFileNameParser getInstance() {
+	public static GDriveFileNameParser getInstance() {
 		return instance;
 	}
 
-	public AzureFileNameParser() {
+	public GDriveFileNameParser() {
 		super(443);
 	}
 
@@ -28,7 +28,7 @@ public class AzureFileNameParser extends HostFileNameParser {
 
 		int eidx = filename.indexOf("@/");
 		if (eidx != -1) 
-			filename = filename.substring(0,  eidx + 1) + "windowsazure.com" + filename.substring(eidx + 1);
+			filename = filename.substring(0,  eidx + 1) + "google.com" + filename.substring(eidx + 1);
 		
 		try {
 			auth = extractToPath(filename, name);
@@ -51,7 +51,7 @@ public class AzureFileNameParser extends HostFileNameParser {
 			path = name.toString();
 
 		}
-		return new AzureFileName(auth == null ? null : auth.getUserName(), auth == null ? null : auth.getPassword(),
+		return new GDriveFileName(auth == null ? null : auth.getUserName(), auth == null ? null : auth.getPassword(),
 				path, fileType);
 	}
 

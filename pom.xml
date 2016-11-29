@@ -52,6 +52,7 @@
 		<module>vfs-jets3t</module>
 		<module>vfs-azure</module>
 		<module>vfs-dropbox</module>
+		<module>vfs-googledrive</module>
 	</modules>
 
 	<dependencies>

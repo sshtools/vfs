@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.googledrive.GDriveFileProvider">
+		<scheme name="gdrive" />
+        <if-available class-name="com.google.api.services.drive.Drive"/>
+	</provider>
+</providers>
