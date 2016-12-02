@@ -17,6 +17,8 @@ import org.apache.commons.vfs2.provider.GenericFileName;
 import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
 
 import com.emc.ecs.nfsclient.nfs.nfs3.Nfs3;
+import com.emc.ecs.nfsclient.rpc.CredentialNone;
+import com.sshtools.vfs.nfs.NFSFileSystemConfigBuilder.Auth;
 
 public class NFSFileProvider extends AbstractOriginatingFileProvider {
 
@@ -41,25 +43,28 @@ public class NFSFileProvider extends AbstractOriginatingFileProvider {
 		setFileNameParser(new NFSFileNameParser());
 	}
 
-    /**
-     * Locates a file from its parsed URI.
-     * @param name The file name.
-     * @param fileSystemOptions FileSystem options.
-     * @return A FileObject associated with the file.
-     * @throws FileSystemException if an error occurs.
-     */
-    protected FileObject findFile(final FileName name, final FileSystemOptions fileSystemOptions)
-        throws FileSystemException
-    {
-        // Check in the cache for the file system
-        final FileName rootName = getContext().getFileSystemManager().resolveName(name, FileName.ROOT_PATH);
+	/**
+	 * Locates a file from its parsed URI.
+	 * 
+	 * @param name
+	 *            The file name.
+	 * @param fileSystemOptions
+	 *            FileSystem options.
+	 * @return A FileObject associated with the file.
+	 * @throws FileSystemException
+	 *             if an error occurs.
+	 */
+	protected FileObject findFile(final FileName name, final FileSystemOptions fileSystemOptions)
+			throws FileSystemException {
+		// Check in the cache for the file system
+		final FileName rootName = getContext().getFileSystemManager().resolveName(name, FileName.ROOT_PATH);
 
-        final FileSystem fs = getFileSystem(rootName, fileSystemOptions);
+		final FileSystem fs = getFileSystem(rootName, fileSystemOptions);
 
-        // Locate the file
-        // return fs.resolveFile(name.getPath());
-        return fs.resolveFile(name);
-    }
+		// Locate the file
+		// return fs.resolveFile(name.getPath());
+		return fs.resolveFile(name);
+	}
 
 	protected FileSystem doCreateFileSystem(FileName fileName, FileSystemOptions fileSystemOptions)
 			throws FileSystemException {
@@ -72,28 +77,41 @@ public class NFSFileProvider extends AbstractOriginatingFileProvider {
 
 				authData = UserAuthenticatorUtils.authenticate(fsOptions, AUTHENTICATOR_TYPES);
 
-				String clientId = UserAuthenticatorUtils
+				String uid = UserAuthenticatorUtils
 						.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.USERNAME, null));
 
-				if (clientId == null || clientId.length() == 0)
-					clientId = ((GenericFileName) fileName).getUserName();
+				if (uid == null || uid.length() == 0)
+					uid = fn.getUserName();
 
-				String clientSecret = UserAuthenticatorUtils
+				String gid = UserAuthenticatorUtils
 						.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.PASSWORD, null));
 
-				if (clientSecret == null || clientSecret.length() == 0)
-					clientSecret = ((GenericFileName) fileName).getPassword();
+				if (gid == null || gid.length() == 0)
+					gid = ((GenericFileName) fileName).getPassword();
 
-				if (clientId == null || clientSecret == null || clientId.length() + clientSecret.length() == 0) {
+				if (uid == null || gid == null || uid.length() + gid.length() == 0) {
 					throw new FileSystemException("Empty credentials");
 				}
+
 				String mount = fn.getMount();
 				while (mount != null && mount.length() > 1 && mount.endsWith("/"))
 					mount = mount.substring(0, mount.length() - 1);
 				if (mount == null || mount.equals(""))
 					mount = "/";
 
-				Nfs3 nfs3 = new Nfs3(fn.getHostName() + ":" + mount, 0, 0, 3);
+				Nfs3 nfs3 = null;
+				if (NFSFileSystemConfigBuilder.getInstance().getAuth(fsOptions) == Auth.NONE)
+					nfs3 = new Nfs3(fn.getHostName() + ":" + mount, new CredentialNone(),
+							NFSFileSystemConfigBuilder.getInstance().getRetries(fsOptions));
+				else {
+					try {
+						nfs3 = new Nfs3(fn.getHostName() + ":" + mount, Integer.parseInt(uid), Integer.parseInt(gid),
+								NFSFileSystemConfigBuilder.getInstance().getRetries(fsOptions));
+					} catch (NumberFormatException nfe) {
+						throw new IOException(
+								"NFS provider expects the authority part of the URI to be <uid>:<gid> (the numeric User ID and Group ID of the user to connect as)");
+					}
+				}
 				return new NFSFileSystem(fn, fsOptions, nfs3);
 			} finally {
 				UserAuthenticatorUtils.cleanup(authData);
