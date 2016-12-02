@@ -97,7 +97,7 @@ public class NFSFileProvider extends AbstractOriginatingFileProvider {
 				while (mount != null && mount.length() > 1 && mount.endsWith("/"))
 					mount = mount.substring(0, mount.length() - 1);
 				if (mount == null || mount.equals(""))
-					mount = "/";
+					mount = NFSFileSystemConfigBuilder.getInstance().getMount(fsOptions);
 
 				Nfs3 nfs3 = null;
 				if (NFSFileSystemConfigBuilder.getInstance().getAuth(fsOptions) == Auth.NONE)

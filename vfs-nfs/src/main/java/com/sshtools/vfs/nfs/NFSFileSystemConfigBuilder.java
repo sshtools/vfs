@@ -8,6 +8,7 @@ public class NFSFileSystemConfigBuilder extends FileSystemConfigBuilder {
 	private static final String MODE = "mode";
 	private static final String AUTH = "auth";
 	private static final String RETRIES = "retries";
+	private static final String MOUNT = "mount";
 	private final static NFSFileSystemConfigBuilder builder = new NFSFileSystemConfigBuilder();
 
 	public enum Mode {
@@ -54,5 +55,13 @@ public class NFSFileSystemConfigBuilder extends FileSystemConfigBuilder {
 
 	public void setRetries(FileSystemOptions opts, int retries) {
 		setParam(opts, RETRIES, retries);
+	}
+
+	public String getMount(FileSystemOptions opts) {
+		return getString(opts, MOUNT, "/");
+	}
+
+	public void setMount(FileSystemOptions opts, String mount) {
+		setParam(opts, MOUNT, mount);
 	}
 }
