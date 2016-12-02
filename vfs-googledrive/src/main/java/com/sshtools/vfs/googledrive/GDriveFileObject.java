@@ -93,7 +93,7 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 			}
 
 			if (request != null) {
-				children = new ArrayList<>();
+				children = new ArrayList<File>();
 				do {
 					try {
 						FileList files = request.execute();
@@ -236,11 +236,11 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 
 	@Override
 	protected OutputStream doGetOutputStream(boolean bAppend) throws Exception {
-		GDriveFileObject parent = (GDriveFileObject) getParent();
-		PipedOutputStream pout = new PipedOutputStream();
-		PipedInputStream pin = new PipedInputStream(pout);
-		String mimeType = ((GDriveFileSystem) getFileSystem()).getTika().detect(getName().getBaseName());
-		AbstractInputStreamContent in = new InputStreamContent(mimeType, pin);
+		final GDriveFileObject parent = (GDriveFileObject) getParent();
+		final PipedOutputStream pout = new PipedOutputStream();
+		final PipedInputStream pin = new PipedInputStream(pout);
+		final String mimeType = ((GDriveFileSystem) getFileSystem()).getTika().detect(getName().getBaseName());
+		final AbstractInputStreamContent in = new InputStreamContent(mimeType, pin);
 
 		if (file == null) {
 			file = new File();

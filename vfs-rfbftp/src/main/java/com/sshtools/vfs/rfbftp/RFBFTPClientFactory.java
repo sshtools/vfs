@@ -7,6 +7,7 @@ import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.UserAuthenticationData;
 import org.apache.commons.vfs2.UserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
+import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
 
 import com.sshtools.rfb.RFBContext;
 import com.sshtools.rfb.RFBEncoding;
@@ -15,8 +16,8 @@ import com.sshtools.rfb.RFBEventHandler;
 public class RFBFTPClientFactory {
 	static SocketFactory socketFactory = null;
 
-	public static RFBFTPClient createConnection(String hostname, int port, String password, FileSystemOptions fileSystemOptions)
-			throws FileSystemException {
+	public static RFBFTPClient createConnection(String hostname, int port, final String password,
+			final FileSystemOptions fileSystemOptions) throws FileSystemException {
 		// The file system options may already have a client
 		RFBFTPClient rfb = RFBFTPFileSystemConfigBuilder.getInstance().getClient(fileSystemOptions);
 		if (rfb != null) {
@@ -27,16 +28,6 @@ public class RFBFTPClientFactory {
 		 * settings
 		 */
 		try {
-			if (password == null) {
-				UserAuthenticator ua = DefaultFileSystemConfigBuilder.getInstance().getUserAuthenticator(fileSystemOptions);
-				UserAuthenticationData data = ua
-					.requestAuthentication(new UserAuthenticationData.Type[] { UserAuthenticationData.PASSWORD });
-				if (data == null) {
-					throw new Exception("vfs.provider.sftp/authentication-cancelled.error");
-				}
-				password = new String(data.getData(UserAuthenticationData.PASSWORD));
-			}
-			final String fPassword = password;
 			RFBContext context = new RFBContext();
 			if (port < 5800) {
 				port += 5900;
@@ -46,7 +37,25 @@ public class RFBFTPClientFactory {
 				}
 
 				public String passwordAuthenticationRequired() {
-					return fPassword;
+					if (password == null) {
+						UserAuthenticator ua = DefaultFileSystemConfigBuilder.getInstance()
+								.getUserAuthenticator(fileSystemOptions);
+						UserAuthenticationData data = ua.requestAuthentication(
+								new UserAuthenticationData.Type[] { UserAuthenticationData.PASSWORD });
+
+						try {
+							if (data == null) {
+								return null;
+							}
+							char[] pw = data.getData(UserAuthenticationData.PASSWORD);
+							if (pw == null)
+								return null;
+							return new String(pw);
+						} finally {
+							UserAuthenticatorUtils.cleanup(data);
+						}
+					}
+					return password;
 				}
 
 				public void encodingChanged(RFBEncoding currentEncoding) {
@@ -61,7 +70,7 @@ public class RFBFTPClientFactory {
 		} catch (FileSystemException fse) {
 			throw fse;
 		} catch (final Exception ex) {
-			throw new FileSystemException("vfs.provider.rfb/connect.error", new Object[] { hostname }, ex);
+			throw new FileSystemException("vfs.provider.rfb/connect.error", ex, hostname);
 		}
 		return rfb;
 	}

@@ -1,0 +1,8 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.webdav.WebdavFileProvider">
+		<scheme name="webdav" />
+        <if-available class-name="com.github.sardine.Sardine"/>
+        <scheme name="webdavs" />
+        <if-available class-name="com.github.sardine.Sardine"/>
+	</provider>
+</providers>

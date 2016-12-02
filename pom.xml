@@ -49,10 +49,11 @@
 	<modules>
 		<module>vfs-rfbftp</module>
 		<module>vfs-s3</module>
-		<module>vfs-jets3t</module>
 		<module>vfs-azure</module>
 		<module>vfs-dropbox</module>
 		<module>vfs-googledrive</module>
+		<module>vfs-webdav</module>
+		<module>vfs-nfs</module>
 	</modules>
 
 	<dependencies>

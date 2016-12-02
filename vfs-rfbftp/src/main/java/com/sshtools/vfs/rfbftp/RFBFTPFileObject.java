@@ -18,7 +18,7 @@ import org.apache.commons.vfs2.provider.UriParser;
 import com.sshtools.rfb.RFBFS;
 import com.sshtools.rfbcommon.RFBFile;
 
-public class RFBFTPFileObject extends AbstractFileObject {
+public class RFBFTPFileObject extends AbstractFileObject<RFBFTPFileSystem> {
 	private final RFBFTPFileSystem fileSystem;
 	private RFBFile attrs;
 
@@ -38,7 +38,8 @@ public class RFBFTPFileObject extends AbstractFileObject {
 	}
 
 	private void statSelf() throws Exception {
-		attrs = getRFBFileSystem().stat(processPath(getName().getPathDecoded()));
+		String path = processPath(getName().getPathDecoded());
+		attrs = getRFBFileSystem().stat(path);
 	}
 
 	private RFBFS getRFBFileSystem() throws IOException {

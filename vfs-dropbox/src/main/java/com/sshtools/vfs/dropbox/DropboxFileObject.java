@@ -265,7 +265,7 @@ public class DropboxFileObject extends AbstractFileObject<DropboxFileSystem> {
 		FileObject[] result = new FileObject[children.size()];
 		int i = 0;
 		for (Metadata entry : children.values()) {
-			result[i] = dbxFs.resolveFile(entry.getPathDisplay());
+			result[i] = dbxFs.resolveFile(UriParser.encode(entry.getPathDisplay()));
 			i++;
 		}
 		return result;

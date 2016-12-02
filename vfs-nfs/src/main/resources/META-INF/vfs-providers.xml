@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.nfs.NFSFileProvider">
+		<scheme name="nfs" />
+        <if-available class-name="com.emc.ecs.nfsclient.nfs.Nfs"/>
+	</provider>
+</providers>

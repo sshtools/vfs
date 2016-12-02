@@ -76,7 +76,7 @@ public class GDriveFileProvider extends AbstractOriginatingFileProvider {
 		super();
 		setFileNameParser(GDriveFileNameParser.getInstance());
 	}
-	
+
 	public static FileDataStoreFactory getDataStoreFactory() {
 		return dataStoreFactory;
 	}
@@ -84,27 +84,30 @@ public class GDriveFileProvider extends AbstractOriginatingFileProvider {
 	private Credential authorize(NetHttpTransport httpTransport, FileSystemOptions fsOptions, GenericFileName fileName)
 			throws IOException {
 		GoogleClientSecrets secrets = loadSecrets(fsOptions);
+		System.out.println(":>> " + secrets.toPrettyString());
 
 		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,
 				GDriveFileProvider.JSON_FACTORY, secrets, Collections.singleton(DriveScopes.DRIVE))
 						.setDataStoreFactory(dataStoreFactory).build();
 
 		String userId = ((GenericFileName) fileName).getUserName();
-		if (userId == null) {
-			throw new IOException(
-					"A user identifier is required. This may anything (no need to be your real Google username), it used to locate stored credentials.");
-		}
-
-		Credential credential = flow.loadCredential(userId);
-		if (credential != null)
-			return credential;
 
 		UserAuthenticationData authData = null;
 		authData = UserAuthenticatorUtils.authenticate(fsOptions, AUTHENTICATOR_TYPES);
 		try {
 
-			UserAuthenticatorUtils.toString(
-					UserAuthenticatorUtils.getData(authData, UserAuthenticationData.USERNAME, userId.toCharArray()));
+			if (userId == null)
+				userId = UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData,
+						UserAuthenticationData.USERNAME, userId == null ? null : userId.toCharArray()));
+
+			if (userId == null) {
+				throw new IOException(
+						"A user identifier is required. This may anything (no need to be your real Google username), it used to locate stored credentials.");
+			}
+			
+			Credential credential = flow.loadCredential(userId);
+			if (credential != null)
+				return credential;
 
 			String tokenResponseJson = UserAuthenticatorUtils
 					.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.PASSWORD, null));
