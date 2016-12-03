@@ -20,7 +20,6 @@ import com.emc.ecs.nfsclient.nfs.io.Nfs3File;
 import com.emc.ecs.nfsclient.nfs.io.NfsFileInputStream;
 import com.emc.ecs.nfsclient.nfs.io.NfsFileOutputStream;
 import com.emc.ecs.nfsclient.nfs.nfs3.Nfs3;
-import com.sshtools.vfs.nfs.NFSFileSystemConfigBuilder.Mode;
 
 public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 	final static Log LOG = LogFactory.getLog(NFSFileObject.class);
@@ -32,12 +31,12 @@ public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 
 	private Nfs3File file;
 
-
 	public NFSFileObject(AbstractFileName fileName, NFSFileSystem fileSystem, Nfs3 nfs3) throws FileSystemException {
 		this(fileName, fileSystem, nfs3, null);
 	}
 
-	public NFSFileObject(AbstractFileName fileName, NFSFileSystem fileSystem, Nfs3 nfs3, Nfs3File file) throws FileSystemException {
+	public NFSFileObject(AbstractFileName fileName, NFSFileSystem fileSystem, Nfs3 nfs3, Nfs3File file)
+			throws FileSystemException {
 		super(fileName, fileSystem);
 		this.drive = nfs3;
 		this.file = file;
@@ -55,8 +54,7 @@ public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 
 	protected Nfs3File getNfsFile() throws IOException {
 		Nfs3File file = this.file;
-		if (file == null || NFSFileSystemConfigBuilder.getInstance()
-				.getMode(getFileSystem().getFileSystemOptions()) == Mode.LIVE)
+		if (file == null)
 			file = new Nfs3File(drive, getName().getPath());
 		return file;
 	}
@@ -68,16 +66,12 @@ public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 
 	@Override
 	protected void doAttach() throws Exception {
-		if (NFSFileSystemConfigBuilder.getInstance()
-				.getMode(getFileSystem().getFileSystemOptions()) == Mode.ATTACH_DETACH)
-			file = getNfsFile();
+		file = getNfsFile();
 	}
 
 	@Override
 	protected void doDetach() throws Exception {
-		if (NFSFileSystemConfigBuilder.getInstance()
-				.getMode(getFileSystem().getFileSystemOptions()) == Mode.ATTACH_DETACH)
-			file = null;
+		file = null;
 	}
 
 	@Override
@@ -131,11 +125,12 @@ public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 	@Override
 	protected FileObject[] doListChildrenResolved() throws Exception {
 		List<FileObject> l = new LinkedList<FileObject>();
-		for(Nfs3File s: getNfsFile().listFiles()) {
-			NFSFileName nfsname = (NFSFileName)getName();
-			NFSFileName n = new NFSFileName(getName().getScheme(), nfsname.getHostName(), 
-					nfsname.getMount(),  nfsname.getUserName(), 
-					nfsname.getPassword(), getName().getPath() + "/" + s.getName(), s.isDirectory() ? FileType.FOLDER : FileType.FILE);
+		for (Nfs3File s : getNfsFile().listFiles()) {
+			NFSFileName nfsname = (NFSFileName) getName();
+			NFSFileName n = new NFSFileName(getName().getScheme(), nfsname.getHostName(), nfsname.getMount(),
+					nfsname.getUserName(), nfsname.getPassword(),
+					getName().getPath() + (getName().getPath().endsWith("/") ? "" : "/") + s.getName(),
+					s.isDirectory() ? FileType.FOLDER : FileType.FILE);
 			NFSFileObject e = new NFSFileObject(n, (NFSFileSystem) getFileSystem(), drive, s);
 			l.add(e);
 		}

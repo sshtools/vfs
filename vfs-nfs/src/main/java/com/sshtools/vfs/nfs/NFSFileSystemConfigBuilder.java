@@ -5,7 +5,6 @@ import org.apache.commons.vfs2.FileSystemConfigBuilder;
 import org.apache.commons.vfs2.FileSystemOptions;
 
 public class NFSFileSystemConfigBuilder extends FileSystemConfigBuilder {
-	private static final String MODE = "mode";
 	private static final String AUTH = "auth";
 	private static final String RETRIES = "retries";
 	private static final String MOUNT = "mount";
@@ -24,15 +23,6 @@ public class NFSFileSystemConfigBuilder extends FileSystemConfigBuilder {
 	}
 
 	private NFSFileSystemConfigBuilder() {
-	}
-
-	public void setMode(FileSystemOptions opts, Mode mode) {
-		setParam(opts, MODE, mode);
-	}
-
-	public Mode getMode(FileSystemOptions opts) {
-		Mode m = (Mode) getParam(opts, MODE);
-		return m == null ? Mode.ATTACH_DETACH : m;
 	}
 
 	public void setAuth(FileSystemOptions opts, Auth mode) {
