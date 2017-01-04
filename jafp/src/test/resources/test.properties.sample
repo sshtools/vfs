@@ -1,0 +1,8 @@
+# Hostname
+testHost=fileserve.mycompany.com
+
+# Username
+testUserOk=bob
+
+# Password
+testPassword=asecret

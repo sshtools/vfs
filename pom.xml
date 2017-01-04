@@ -47,6 +47,7 @@
 	</developers>
 
 	<modules>
+		<module>jafp</module>
 		<module>vfs-ext</module>
 		<module>vfs-rfbftp</module>
 		<module>vfs-s3</module>
