@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.afp.AFPFileProvider">
+		<scheme name="afp" />
+        <if-available class-name="com.sshtools.afp.client.AFPClient"/>
+	</provider>
+</providers>

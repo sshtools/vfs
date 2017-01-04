@@ -4,7 +4,7 @@
 	<properties>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<maven.compiler.source>1.6</maven.compiler.source>
-		<commonsVFSVersion>2.1-NAM-SNAPSHOT</commonsVFSVersion>
+		<commonsVFSVersion>2.1</commonsVFSVersion>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -55,6 +55,7 @@
 		<module>vfs-googledrive</module>
 		<module>vfs-webdav</module>
 		<module>vfs-nfs</module>
+		<module>vfs-afp</module>
 	</modules>
 
 	<dependencies>
