@@ -31,17 +31,14 @@ import com.google.api.services.drive.model.User;
 
 public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 	final static Log LOG = LogFactory.getLog(GDriveFileObject.class);
-
 	public final static int DEFAULT_BLOB_INCREMENT = 1024;
 	public final static int DEFAULT_BLOB_SIZE = 1024;
-
 	private boolean attached = false;
 	private List<File> children;
 	private final Drive drive;
 	private File file;
 
-	public GDriveFileObject(AbstractFileName fileName, GDriveFileSystem fileSystem, Drive drive)
-			throws FileSystemException {
+	public GDriveFileObject(AbstractFileName fileName, GDriveFileSystem fileSystem, Drive drive) throws FileSystemException {
 		super(fileName, fileSystem);
 		this.drive = drive;
 	}
@@ -51,47 +48,45 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 		if (!attached) {
 			file = null;
 			children = null;
-
 			GDriveFileObject parentFile = null;
-			if (!getName().getPath().equals("/") && getParent() instanceof GDriveFileObject) {
+			String path = getName().getPath();
+			if (!path.equals("/") && getParent() instanceof GDriveFileObject) {
 				parentFile = (GDriveFileObject) getParent();
 			}
-
 			/*
 			 * If we have a parent, and it is a google file, is this file in
 			 * it's children? If so,
 			 */
+			if(parentFile != null && !parentFile.attached)
+				parentFile.doAttach();
 			if (parentFile != null && parentFile.children != null) {
 				file = findFile(getName().getBaseName());
 			}
-
 			/**
 			 * The path is for a for, if we did not find it in it's parent, the
 			 * resolve the entire path so we can try again to retrieve from the
 			 * parent file
 			 */
-			if (file == null && !getName().getPath().equals("/")) {
+			if (file == null && !path.equals("/")) {
 				parentFile = (GDriveFileObject) getFileSystem().resolveFile(getName().getParent());
+				if(parentFile != null && !parentFile.attached)
+					parentFile.doAttach();
 				if (parentFile != null && parentFile.children != null) {
 					file = findFile(getName().getBaseName());
 				}
-
 				if (file == null) {
 					// File is imaginary
 					return;
 				}
 			}
-
 			com.google.api.services.drive.Drive.Files.List request = null;
-
-			if (getName().getPath().equals("/")) {
+			if (path.equals("/")) {
 				/* Root */
 				request = drive.files().list().setQ("'root' in parents");
 			} else if (file != null && "application/vnd.google-apps.folder".equals(file.getMimeType())) {
 				/* If this is known to be a directory, list the files in it */
 				request = drive.files().list().setQ(String.format("'%s' in parents", file.getId()));
 			}
-
 			if (request != null) {
 				children = new ArrayList<File>();
 				do {
@@ -106,10 +101,8 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 					}
 				} while (request.getPageToken() != null && request.getPageToken().length() > 0);
 			}
-
 			attached = true;
 		}
-
 	}
 
 	@Override
@@ -202,10 +195,10 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 	}
 
 	private String processUser(User user) {
-		if(user == null)
+		if (user == null)
 			return null;
 		String un = user.getDisplayName();
-		if(user.getEmailAddress() != null)
+		if (user.getEmailAddress() != null)
 			un += " (" + user.getEmailAddress() + ")";
 		return un;
 	}
@@ -241,14 +234,12 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 		final PipedInputStream pin = new PipedInputStream(pout);
 		final String mimeType = ((GDriveFileSystem) getFileSystem()).getTika().detect(getName().getBaseName());
 		final AbstractInputStreamContent in = new InputStreamContent(mimeType, pin);
-
 		if (file == null) {
 			file = new File();
 			file.setMimeType(mimeType);
 			file.setName(getName().getBaseName());
 			if (parent.file != null)
 				file.setParents(Arrays.asList(parent.file.getId()));
-
 			new Thread("OutputSteam-" + getName()) {
 				public void run() {
 					try {
@@ -262,7 +253,6 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 						LOG.error("Failed to pipe I/O.", e);
 					}
 				}
-
 			}.start();
 		} else {
 			new Thread("OutputSteam-" + getName()) {
@@ -283,7 +273,6 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 			}.start();
 		}
 		return pout;
-
 	}
 
 	@Override
@@ -304,10 +293,12 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 
 	@Override
 	protected String[] doListChildren() throws Exception {
-		String[] a = new String[children.size()];
-		int i = 0;
-		for (File f : children) {
-			a[i++] = f.getName();
+		String[] a = new String[children == null ? 0 : children.size()];
+		if (children != null) {
+			int i = 0;
+			for (File f : children) {
+				a[i++] = f.getName();
+			}
 		}
 		return a;
 	}
@@ -322,15 +313,12 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 		GDriveFileObject parent = (GDriveFileObject) newfile.getParent();
 		if (parent.children != null && this.file != null)
 			parent.children.remove(file);
-
 		file.setName(newfile.getName().getBaseName());
 		file.setParents(Arrays.asList(parent.file.getId()));
 		file = drive.files().update(file.getId(), file).execute();
 		attached = false;
-
 		GDriveFileObject newParent = (GDriveFileObject) newfile.getParent();
 		newParent.children.add(file);
-
 		doAttach();
 	}
 
@@ -348,5 +336,4 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 		}
 		return null;
 	}
-
 }

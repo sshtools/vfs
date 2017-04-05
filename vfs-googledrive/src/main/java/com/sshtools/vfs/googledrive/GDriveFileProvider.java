@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -84,7 +85,6 @@ public class GDriveFileProvider extends AbstractOriginatingFileProvider {
 	private Credential authorize(NetHttpTransport httpTransport, FileSystemOptions fsOptions, GenericFileName fileName)
 			throws IOException {
 		GoogleClientSecrets secrets = loadSecrets(fsOptions);
-		System.out.println(":>> " + secrets.toPrettyString());
 
 		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,
 				GDriveFileProvider.JSON_FACTORY, secrets, Collections.singleton(DriveScopes.DRIVE))
@@ -109,11 +109,15 @@ public class GDriveFileProvider extends AbstractOriginatingFileProvider {
 			if (credential != null)
 				return credential;
 
-			String tokenResponseJson = UserAuthenticatorUtils
+			String tokenResponseJson =UserAuthenticatorUtils
 					.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.PASSWORD, null));
 
-			if (tokenResponseJson == null || tokenResponseJson.length() == 0)
+			if (tokenResponseJson == null || tokenResponseJson.length() == 0) {
 				tokenResponseJson = ((GenericFileName) fileName).getPassword();
+				if (tokenResponseJson != null) {
+					tokenResponseJson =  URLDecoder.decode(tokenResponseJson, "UTF-8");
+				}
+			}
 
 			if (userId == null || tokenResponseJson == null || userId.length() + tokenResponseJson.length() == 0) {
 				throw new FileSystemException("Empty credentials");
