@@ -50,6 +50,7 @@ import com.amazonaws.services.s3.model.Owner;
 import com.amazonaws.services.s3.model.Permission;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.util.StringUtils;
 import com.sshtools.vfs.s3.operations.acl.Acl;
 import com.sshtools.vfs.s3.operations.acl.IAclGetter;
 
@@ -61,7 +62,7 @@ import com.sshtools.vfs.s3.operations.acl.IAclGetter;
  * @author Marat Komarov
  * @author Matthias L. Jugel
  */
-public class S3FileObject extends AbstractFileObject {
+public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 	/**
 	 * Amazon S3 service
 	 */
@@ -103,39 +104,47 @@ public class S3FileObject extends AbstractFileObject {
 	@Override
 	protected void doAttach() throws IOException, NoSuchAlgorithmException {
 		String s3Key = getS3Key();
-		try {
-			// Do we have folder with that name?
-			object = service.getObject(bucket.getName(), s3Key + FileName.SEPARATOR);
-			logger.info("Attach folder to S3 Object: " + object);
-			exists = true;
-			return;
-		} catch (AmazonS3Exception ase) {
-			if (ase.getStatusCode() != 404)
-				throw ase;
+		
+		if(!StringUtils.isNullOrEmpty(s3Key)) {
+			try {
+				// Do we have folder with that name?
+				object = service.getObject(bucket.getName(), s3Key + FileName.SEPARATOR);
+				logger.info("Attach folder to S3 Object: " + object);
+				exists = true;
+				return;
+			} catch (AmazonS3Exception ase) {
+				if (ase.getStatusCode() != 404)
+					throw ase;
+			}
+			
+			try {
+				// Do we have file with name?
+				object = service.getObject(bucket.getName(), s3Key);
+				logger.info("Attach file to S3 Object: " + object);
+				exists = true;
+				return;
+			} catch (AmazonS3Exception ase) {
+				if (ase.getStatusCode() != 404)
+					throw ase;
+				// No, we don't
+			}
+			
+			// Create a new
+			if (object == null) {
+				object = new S3Object();
+				object.setBucketName(bucket.getName());
+				object.setKey(s3Key);
+				ObjectMetadata objectMetadata = new ObjectMetadata();
+				objectMetadata.setLastModified(new Date());
+				object.setObjectMetadata(objectMetadata);
+				logger.info(String.format("Attach file to S3 Object: %s", object));
+				downloaded = true;
+				exists = false;
+			}
+		} else {
+			exists = service.doesBucketExist(bucket.getName());
 		}
-		try {
-			// Do we have file with name?
-			object = service.getObject(bucket.getName(), s3Key);
-			logger.info("Attach file to S3 Object: " + object);
-			exists = true;
-			return;
-		} catch (AmazonS3Exception ase) {
-			if (ase.getStatusCode() != 404)
-				throw ase;
-			// No, we don't
-		}
-		// Create a new
-		if (object == null) {
-			object = new S3Object();
-			object.setBucketName(bucket.getName());
-			object.setKey(s3Key);
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-			objectMetadata.setLastModified(new Date());
-			object.setObjectMetadata(objectMetadata);
-			logger.info(String.format("Attach file to S3 Object: %s", object));
-			downloaded = true;
-			exists = false;
-		}
+		
 	}
 
 	@Override
@@ -216,6 +225,9 @@ public class S3FileObject extends AbstractFileObject {
 		if (!exists) {
 			return FileType.IMAGINARY;
 		}
+		if(object==null) {
+			return FileType.FOLDER;
+		}
 		String contentType = object.getObjectMetadata().getContentType();
 		if (null == contentType) {
 			return FileType.FOLDER;
@@ -287,7 +299,7 @@ public class S3FileObject extends AbstractFileObject {
 	}
 
 	protected String[] XXXXXXdoListChildren() throws Exception {
-		String path = object.getKey();
+		String path =  object==null ? "" : object.getKey();
 		// make sure we add a '/' slash at the end to find children
 		if ((!"".equals(path)) && (!path.endsWith(SEPARATOR))) {
 			path = path + "/";
@@ -316,7 +328,7 @@ public class S3FileObject extends AbstractFileObject {
 
 	@Override
 	protected String[] doListChildren() throws Exception {
-		String path = object.getKey();
+		String path = object==null ? "" : object.getKey();
 		// make sure we add a '/' slash at the end to find children
 		if ((!"".equals(path)) && (!path.endsWith(SEPARATOR))) {
 			path = path + "/";
@@ -363,7 +375,7 @@ public class S3FileObject extends AbstractFileObject {
 	 */
 	@Override
 	protected FileObject[] doListChildrenResolved() throws Exception {
-		String path = object.getKey();
+		String path = object==null ? "" : object.getKey();
 		// make sure we add a '/' slash at the end to find children
 		if ((!"".equals(path)) && (!path.endsWith(SEPARATOR))) {
 			path = path + "/";
