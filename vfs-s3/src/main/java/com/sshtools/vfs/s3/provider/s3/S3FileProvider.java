@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.Capability;
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileSystem;
@@ -57,11 +55,6 @@ public class S3FileProvider extends AbstractOriginatingFileProvider {
     public static FileSystemOptions getDefaultFileSystemOptions() {
         return defaultOptions;
     }
-
-    /**
-     * Logger instance
-     */
-    private final Log logger = LogFactory.getLog(S3FileProvider.class);
 
     public S3FileProvider() {
         super();

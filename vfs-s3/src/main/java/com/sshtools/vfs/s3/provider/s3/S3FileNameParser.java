@@ -7,8 +7,6 @@ import org.apache.commons.vfs2.provider.AbstractFileNameParser;
 import org.apache.commons.vfs2.provider.UriParser;
 import org.apache.commons.vfs2.provider.VfsComponentContext;
 
-import com.hypersocket.utils.FileUtils;
-
 /**
  * @author Matthias L. Jugel
  */
@@ -70,7 +68,14 @@ public class S3FileNameParser extends AbstractFileNameParser {
         // Extract bucket name
         final String bucketName = UriParser.extractFirstElement(name);
 
-        return new S3FileName(scheme, accessKey, secretKey, bucketName,  FileUtils.checkStartsWithSlash(name.toString()), fileType);
+        return new S3FileName(scheme, accessKey, secretKey, bucketName,  checkStartsWithSlash(name.toString()), fileType);
     }
 
+    private String checkStartsWithSlash(String str) {
+    	if (str.startsWith("/")) {
+			return str;
+		} else {
+			return "/" + str;
+		}
+    }
 }

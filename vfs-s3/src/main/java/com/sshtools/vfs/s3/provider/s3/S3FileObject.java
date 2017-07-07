@@ -83,7 +83,7 @@ import com.sshtools.vfs.s3.operations.IAclGetter;
  * @author Moritz Siuts
  * @author Shon Vella
  */
-public class S3FileObject extends AbstractFileObject {
+public class S3FileObject extends AbstractFileObject<S3FileSystem> {
     private static final Log logger = LogFactory.getLog(S3FileObject.class);
 
     private static final String MIMETYPE_JETS3T_DIRECTORY = "application/x-directory";
@@ -504,7 +504,8 @@ public class S3FileObject extends AbstractFileObject {
      * @return temporary file channel for file cache
      * @throws IOException
      */
-    private FileChannel getCacheFileChannel() throws IOException {
+    @SuppressWarnings("resource")
+	private FileChannel getCacheFileChannel() throws IOException {
         if (cacheFile == null) {
             cacheFile = File.createTempFile("scalr.", ".s3");
         }
@@ -516,7 +517,8 @@ public class S3FileObject extends AbstractFileObject {
      * @return temporary file channel for file output cache
      * @throws IOException
      */
-    private FileChannel getOutputFileChannel() throws IOException {
+    @SuppressWarnings("resource")
+	private FileChannel getOutputFileChannel() throws IOException {
         if (outputFile == null) {
             outputFile = File.createTempFile("scalr.", ".s3");
         }
@@ -588,7 +590,8 @@ public class S3FileObject extends AbstractFileObject {
         fileOwner = owner;
 
         // Read S3 ACL list and build VFS ACL.
-        Set<Grant> grants = s3Acl.getGrants();
+        @SuppressWarnings("deprecation")
+		Set<Grant> grants = s3Acl.getGrants();
 
         for (Grant item : grants) {
             // Map enums to jets3t ones
@@ -930,9 +933,9 @@ public class S3FileObject extends AbstractFileObject {
                     super.copyFrom(file, selector);
                 }
 			} catch (IOException e) {
-				throw new FileSystemException("vfs.provider/copy-file.error", new Object[]{srcFile, destFile}, e);
+				throw new FileSystemException("vfs.provider/copy-file.error", e, srcFile, destFile);
 			} catch (AmazonClientException e) {
-				throw new FileSystemException("vfs.provider/copy-file.error", new Object[]{srcFile, destFile}, e);
+				throw new FileSystemException("vfs.provider/copy-file.error", e, srcFile, destFile);
 			} finally {
 				destFile.close();
 			}
