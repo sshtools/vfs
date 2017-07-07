@@ -1,7 +1,10 @@
 package com.sshtools.vfs.s3.provider.s3;
 
-import java.util.Collection;
-
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.Region;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.Capability;
@@ -11,50 +14,84 @@ import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.provider.AbstractFileName;
 import org.apache.commons.vfs2.provider.AbstractFileSystem;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
+import java.util.Collection;
 
 /**
  * An S3 file system.
- * 
+ *
  * @author Marat Komarov
  * @author Matthias L. Jugel
+ * @author Moritz Siuts
  */
 public class S3FileSystem extends AbstractFileSystem {
-	private AmazonS3Client service;
-	private Bucket bucket;
-	private Log logger = LogFactory.getLog(S3FileSystem.class);
 
-	public S3FileSystem(S3FileName fileName, AmazonS3Client service,
-			FileSystemOptions fileSystemOptions) throws FileSystemException {
-		super(fileName, null, fileSystemOptions);
+    private static final Log logger = LogFactory.getLog(S3FileSystem.class);
 
-		String bucketId = fileName.getBucketId();
-		try {
-			this.service = service;
-			bucket = new Bucket(bucketId);
-			if (!service.doesBucketExist(bucketId)) {
-				bucket = service.createBucket(bucketId);
-			}
-			logger.info(String.format("Created new S3 FileSystem %s", bucketId));
-		} catch (AmazonServiceException e) {
-			String s3message = e.getMessage();
-			if (s3message != null) {
-				throw new FileSystemException(s3message);
-			} else {
-				throw new FileSystemException(e);
-			}
-		}
-	}
+    private final AmazonS3Client service;
+    private final Bucket bucket;
 
-	@Override
-	protected FileObject createFile(AbstractFileName name) throws Exception {
-		return new S3FileObject(name, this, service, bucket);
-	}
+    private boolean shutdownServiceOnClose = false;
 
-	@Override
-	protected void addCapabilities(Collection<Capability> caps) {
-		caps.addAll(S3FileProvider.capabilities);
-	}
+    public S3FileSystem(
+            S3FileName fileName, AmazonS3Client service, FileSystemOptions fileSystemOptions
+    ) throws FileSystemException {
+        super(fileName, null, fileSystemOptions);
+
+        String bucketId = fileName.getBucketId();
+
+        this.service = service;
+
+        try {
+            if (service.doesBucketExist(bucketId)) {
+                bucket = new Bucket(bucketId);
+            } else {
+                bucket = service.createBucket(bucketId);
+
+                logger.debug("Created new bucket.");
+            }
+
+            logger.info("Created new S3 FileSystem " + bucketId);
+        } catch (AmazonServiceException e) {
+            String s3message = e.getMessage();
+
+            if (s3message != null) {
+                throw new FileSystemException(s3message, e);
+            } else {
+                throw new FileSystemException(e);
+            }
+        }
+    }
+
+    @Override
+    protected void addCapabilities(Collection<Capability> caps) {
+        caps.addAll(S3FileProvider.capabilities);
+    }
+
+    protected Bucket getBucket() {
+        return bucket;
+    }
+
+    protected Region getRegion() {
+        return S3FileSystemConfigBuilder.getInstance().getRegion(getFileSystemOptions());
+    }
+
+    protected AmazonS3 getService() {
+        return service;
+    }
+
+    @Override
+    protected FileObject createFile(AbstractFileName fileName) throws Exception {
+        return new S3FileObject(fileName, this);
+    }
+
+    @Override
+    protected void doCloseCommunicationLink() {
+        if (shutdownServiceOnClose) {
+            service.shutdown();
+        }
+    }
+
+    public void setShutdownServiceOnClose(boolean shutdownServiceOnClose) {
+        this.shutdownServiceOnClose = shutdownServiceOnClose;
+    }
 }
