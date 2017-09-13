@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.URISyntaxException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -94,16 +92,6 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
     private boolean attached = false;
 
     /**
-     * Local cache of file content
-     */
-    private File cacheFile;
-
-    /**
-     * Local for output stream
-     */
-    private File outputFile;
-
-    /**
      * Amazon file owner. Used in ACL
      */
     private Owner fileOwner;
@@ -168,12 +156,6 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
         if (attached) {
             logger.info("Detach from S3 Object: " + objectKey);
             objectMetadata = null;
-            if (cacheFile != null) {
-                if (!cacheFile.delete()) {
-                    logger.error("Unable to delete temporary file: " + cacheFile.getPath());
-                }
-                cacheFile = null;
-            }
             attached = false;
         }
     }
@@ -448,19 +430,6 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
         } else {
             return path.substring(1);
         }
-    }
-
-    /**
-     * Get or create temporary file channel for file cache
-     * @return temporary file channel for file cache
-     * @throws IOException
-     */
-    @SuppressWarnings("resource")
-	private FileChannel getCacheFileChannel() throws IOException {
-        if (cacheFile == null) {
-            cacheFile = File.createTempFile("scalr.", ".s3");
-        }
-        return new RandomAccessFile(cacheFile, "rw").getChannel();
     }
 
     // ACL extension methods
