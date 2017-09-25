@@ -33,7 +33,9 @@ public class RFBFTPClientFactory {
 				port += 5900;
 			}
 			rfb = new RFBFTPClient(context, hostname, port, new RFBEventHandler() {
-				public void resized(int width, int height) {
+				
+				@Override
+				public void remoteResize(int arg0, int arg1) {
 				}
 
 				public String passwordAuthenticationRequired() {
