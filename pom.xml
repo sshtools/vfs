@@ -57,6 +57,7 @@
 		<module>vfs-webdav</module>
 		<module>vfs-nfs</module>
 		<module>vfs-afp</module>
+                <module>vfs-gcs</module>
 	</modules>
 
 	<dependencies>
