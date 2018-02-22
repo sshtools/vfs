@@ -185,7 +185,7 @@ public class GoogleFileObject extends AbstractFileObject<GoogleStorageFileSystem
 
 	@Override
 	protected OutputStream doGetOutputStream(boolean bAppend) throws Exception {
-		if(!isFolder()) {
+		if(isFolder()) {
 			throw new IOException("Object is a directory or bucket");
 		}
 		if(!hasBucket()) {
