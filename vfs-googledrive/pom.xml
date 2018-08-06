@@ -42,10 +42,11 @@
 			<version>1.2</version>
 			<type>jar</type>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-drive -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
-			<version>v3-rev67-1.22.0</version>
+			<version>v3-rev124-1.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -61,17 +62,17 @@
 		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client</artifactId>
-			<version>1.22.0</version>
+			<version>1.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client-jackson2</artifactId>
-			<version>1.22.0</version>
+			<version>1.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.oauth-client</groupId>
 			<artifactId>google-oauth-client-jetty</artifactId>
-			<version>1.22.0</version>
+			<version>1.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tika</groupId>
