@@ -13,7 +13,9 @@ public class MD5HashGetter implements IMD5HashGetter {
     private final S3FileObject file;
 
     /**
-     * @param file
+     * Constructor.
+     * 
+     * @param file file
      */
     public MD5HashGetter(S3FileObject file) {
         this.file = file;

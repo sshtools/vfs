@@ -19,7 +19,7 @@ public class S3FileNameParser extends AbstractFileNameParser {
 
     /**
      * Gets singleton
-     * @return
+     * @return instance
      */
     public static S3FileNameParser getInstance() {
         return instance;

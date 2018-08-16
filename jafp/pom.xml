@@ -7,15 +7,24 @@
 	</properties>
 	<modelVersion>4.0.0</modelVersion>
 	<name>Java AFP Client</name>
-	<groupId>com.sshtools</groupId>
 	<artifactId>jafp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<distributionManagement>
+		<repository>
+			<id>opensource-releases</id>
+			<url>http://artifactory.javassh.com/opensource-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>opensource-snapshots</id>
+			<url>http://artifactory.javassh.com/opensource-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
@@ -34,136 +43,7 @@
 				<directory>src/test/resources</directory>
 			</testResource>
 		</testResources>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>2.2.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9.1</version>
-					<executions>
-						<execution>
-							<id>javadoc-jar</id>
-							<phase>package</phase>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-							<configuration>
-								<!-- switch on dependency-driven aggregation -->
-								<includeDependencySources>false</includeDependencySources>
-								<dependencySourceIncludes>
-									<!-- include ONLY dependencies I control -->
-									<dependencySourceInclude>com.sshtools:*</dependencySourceInclude>
-								</dependencySourceIncludes>
-								<additionalparam>-Xdoclint:none</additionalparam>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.5</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>com.mycila</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>2.3</version>
-					<configuration>
-						<header>templates/BSD.txt</header>
-						<properties>
-							<owner>SSHTOOLS Limited</owner>
-							<email>support@sshtools.com</email>
-						</properties>
-						<excludes>
-							<exclude>**/README</exclude>
-							<exclude>src/test/resources/**</exclude>
-							<exclude>src/main/resources/**</exclude>
-						</excludes>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>check</goal>
-								<goal>format</goal>
-								<goal>remove</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.sonatype.plugins</groupId>
-					<artifactId>nexus-staging-maven-plugin</artifactId>
-					<version>1.6.3</version>
-					<extensions>true</extensions>
-					<configuration>
-						<serverId>ossrh-sshtools</serverId>
-						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-						<autoReleaseAfterClose>true</autoReleaseAfterClose>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh-sshtools</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh-sshtools</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-	<profiles>
-		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -191,13 +71,6 @@
 			<version>4.11</version>
 		</dependency>
 	</dependencies>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sonatype</id>
-			<name>Sonatype OSS Snapshots Repository</name>
-			<url>http://oss.sonatype.org/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<description>Based on the apparently inactive Jaffer (https://sourceforge.net/projects/jaffer/). 
 
 This SSHTools fork,  a client implementation was added,, with some of the server code abstracted out so it can be used by the client plus fixing other bit rot (adding generics etc is planned)</description>

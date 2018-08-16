@@ -55,9 +55,8 @@ import com.sshtools.vfs.s3.operations.Acl;
 import com.sshtools.vfs.s3.operations.IAclGetter;
 
 /**
- * Implementation of the virtual S3 file system object using the AWS-SDK.<p/>
- * Based on Matthias Jugel code.
- * {@link http://thinkberg.com/svn/moxo/trunk/modules/vfs.s3/ }
+ * Implementation of the virtual S3 file system object using the AWS-SDK.<br>
+ * Based on Matthias Jugel code. <a href="http://thinkberg.com/svn/moxo/trunk/modules/vfs.s3/">http://thinkberg.com/svn/moxo/trunk/modules/vfs.s3/</a>
  *
  * @author Marat Komarov
  * @author Matthias L. Jugel
@@ -476,11 +475,12 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      *
      * VFS interfaces doesn't provide interface to manage permissions. ACL can be accessed through {@link FileObject#getFileOperations()}
      * Sample: <code>file.getFileOperations().getOperation(IAclGetter.class)</code>
-     * @see {@link FileObject#getFileOperations()}
-     * @see {@link IAclGetter}
      *
      * @return Current Access control list for a file
-     * @throws FileSystemException
+     * @throws FileSystemException on error
+     * 
+     * @see {@link FileObject#getFileOperations()}
+     * @see {@link IAclGetter}
      */
     public Acl getAcl () throws FileSystemException {
         Acl myAcl = new Acl();
@@ -545,11 +545,11 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      *
      * VFS interfaces doesn't provide interface to manage permissions. ACL can be accessed through {@link FileObject#getFileOperations()}
      * Sample: <code>file.getFileOperations().getOperation(IAclGetter.class)</code>
-     * @see {@link FileObject#getFileOperations()}
-     * @see {@link IAclGetter}
      *
      * @param acl the access control list
-     * @throws FileSystemException
+     * @throws FileSystemException on error
+     * @see {@link FileObject#getFileOperations()}
+     * @see {@link IAclGetter}
      */
     public void setAcl (Acl acl) throws FileSystemException {
 
@@ -661,7 +661,7 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      * Temporary accessible url for object.
      * @param expireInSeconds seconds until expiration
      * @return temporary accessible url for object
-     * @throws FileSystemException
+     * @throws FileSystemException on error
      */
     public String getSignedUrl(int expireInSeconds) throws FileSystemException {
         final Calendar cal = Calendar.getInstance();
@@ -680,7 +680,7 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
     /**
      * Get MD5 hash for the file
      * @return md5 hash for file
-     * @throws FileSystemException
+     * @throws FileSystemException on error
      */
     public String getMD5Hash() throws FileSystemException {
         String hash = null;
@@ -705,7 +705,7 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
         return ((S3FileSystem)getFileSystem()).getService();
     }
 
-    /** Amazon S3 bucket */
+    /* Amazon S3 bucket */
     protected Bucket getBucket() {
         return ((S3FileSystem)getFileSystem()).getBucket();
     }

@@ -137,8 +137,8 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     /**
      * Set predefined AWSCredentials object with access and secret keys for accessing AWS.
      *
-     * @param opts
-     * @param credentials
+     * @param opts opts
+     * @param credentials credentials
      */
     public void setAWSCredentials(FileSystemOptions opts, AWSCredentials credentials) {
         setParam(opts, AWS_CREDENTIALS, credentials);
@@ -147,8 +147,8 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     /**
      * Get predefined AWSCredentials object with access and secret keys for accessing AWS.
      *
-     * @param options
-     * @return
+     * @param options options
+     * @return credentials
      */
     public AWSCredentials getAWSCredentials(FileSystemOptions options) throws FileSystemException {
         AWSCredentials credentials = (AWSCredentials) getParam(options, AWS_CREDENTIALS);
@@ -184,8 +184,8 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * In case of many S3FileProviders (useful in multi-threaded environment to eliminate commons-vfs internal locks)
      * you could specify one amazon client for all providers.
      *
-     * @param opts
-     * @param client
+     * @param opts opts
+     * @param client client
      */
     public void setAmazonS3Client(FileSystemOptions opts, AmazonS3Client client) {
         setParam(opts, AMAZON_S3_CLIENT, client);
@@ -194,8 +194,8 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     /**
      * Get preinitialized AmazonS3 client.
      *
-     * @param opts
-     * @return
+     * @param opts opts
+     * @return client
      */
     public AmazonS3Client getAmazonS3Client(FileSystemOptions opts) {
         return (AmazonS3Client) getParam(opts, AMAZON_S3_CLIENT);
