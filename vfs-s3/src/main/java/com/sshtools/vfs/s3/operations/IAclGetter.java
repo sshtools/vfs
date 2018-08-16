@@ -26,7 +26,7 @@ public interface IAclGetter extends FileOperation {
 
     /**
      * Returns file ACL
-     * @return
+     * @return acl
      */
     Acl getAcl();
 

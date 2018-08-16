@@ -478,9 +478,6 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      *
      * @return Current Access control list for a file
      * @throws FileSystemException on error
-     * 
-     * @see {@link FileObject#getFileOperations()}
-     * @see {@link IAclGetter}
      */
     public Acl getAcl () throws FileSystemException {
         Acl myAcl = new Acl();

@@ -23,7 +23,7 @@ import java.util.Map;
  * </code>
  *
  * @author Marat Komarov
- * @author Alex Kovalyov <alex@intridea.com>
+ * @author Alex Kovalyov &lt;alex@intridea.com&gt;
  *
  */
 public class Acl {
@@ -109,7 +109,7 @@ public class Acl {
     /**
      * Allow specific permission for all
      * 
-     * @param permission
+     * @param permission permission
      */
     public void allow (Permission permission) {
         setRule(permission, (byte) 1);
@@ -189,6 +189,7 @@ public class Acl {
      * 
      * @param group group
      * @param permission permission
+     * @return allowed
      */
     public boolean isAllowed (Group group, Permission permission) {
         return rulesTable[group.ordinal()][permission.ordinal()] == 1;
@@ -197,8 +198,9 @@ public class Acl {
     /**
      * Returns true when specific access is denied for a group
      * 
-     * @param group
-     * @param permission
+     * @param group group
+     * @param permission permission
+     * @return denied
      */
     public boolean isDenied (Group group, Permission permission) {
         return rulesTable[group.ordinal()][permission.ordinal()] == 0;

@@ -12,13 +12,15 @@ public interface IAclSetter extends FileOperation {
 
     /**
      * Sets file Access Control List.
-     * @param acl
+     * @param acl acl
      */
     void setAcl(Acl acl);
 
     /**
      * Executes setter operations.
      * Must be called after setAcl.
+     * 
+     * @throws FileSystemException on error
      */
     @Override
     void process() throws FileSystemException;
