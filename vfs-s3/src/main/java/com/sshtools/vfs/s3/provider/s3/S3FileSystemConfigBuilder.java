@@ -149,6 +149,7 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      *
      * @param options options
      * @return credentials
+     * @throws FileSystemException on error
      */
     public AWSCredentials getAWSCredentials(FileSystemOptions options) throws FileSystemException {
         AWSCredentials credentials = (AWSCredentials) getParam(options, AWS_CREDENTIALS);

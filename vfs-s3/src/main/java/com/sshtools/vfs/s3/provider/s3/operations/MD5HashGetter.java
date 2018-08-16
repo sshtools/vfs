@@ -6,7 +6,7 @@ import com.sshtools.vfs.s3.operations.IMD5HashGetter;
 import com.sshtools.vfs.s3.provider.s3.S3FileObject;
 
 /**
- * @author <A href="mailto:alexey at abashev dot ru">Alexey Abashev</A>
+ * @author <A href="mailto:alexey@abashev.ru">Alexey Abashev</A>
  * @version $Id$
  */
 public class MD5HashGetter implements IMD5HashGetter {
