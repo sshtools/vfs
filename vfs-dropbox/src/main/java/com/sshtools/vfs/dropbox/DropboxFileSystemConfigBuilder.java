@@ -62,7 +62,7 @@ public final class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilde
     }
 
     /**
-     * set the data timeout for the ftp client.<br />
+     * set the data timeout for the ftp client.<br>
      * If you set the dataTimeout to <code>null</code> no dataTimeout will be set on the
      * ftp client.
      *
@@ -86,7 +86,7 @@ public final class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilde
     }
 
     /**
-     * set the socket timeout for the ftp client.<br />
+     * set the socket timeout for the ftp client.<br>
      * If you set the socketTimeout to <code>null</code> no socketTimeout will be set on the
      * ftp client.
      *
@@ -99,12 +99,6 @@ public final class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilde
         setParam(opts, SO_TIMEOUT, soTimeout);
     }
 
-    /**
-     * see {@link org.apache.commons.net.ftp.FTP#setControlEncoding} for details and examples.
-     * @param opts The FileSystemOptions.
-     * @param encoding the encoding to use
-     * @since 2.0
-     */
     public void setControlEncoding(FileSystemOptions opts, String encoding)
     {
         setParam(opts, ENCODING, encoding);
