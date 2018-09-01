@@ -15,8 +15,12 @@ import org.apache.commons.vfs2.provider.AbstractOriginatingFileProvider;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Region;
 
 /**
@@ -76,7 +80,7 @@ public class S3FileProvider extends AbstractOriginatingFileProvider {
         final FileSystemOptions fsOptions = (fileSystemOptions != null) ? fileSystemOptions : getDefaultFileSystemOptions();
         final S3FileSystemConfigBuilder config = S3FileSystemConfigBuilder.getInstance();
 
-        AmazonS3Client service = config.getAmazonS3Client(fsOptions);
+        AmazonS3 service = config.getAmazonS3Client(fsOptions);
 
         if (service == null) {
             AWSCredentials awsCredentials = config.getAWSCredentials(fsOptions);
@@ -95,16 +99,13 @@ public class S3FileProvider extends AbstractOriginatingFileProvider {
             }
 
             if (awsCredentials == null) {
-                service = new AmazonS3Client(clientConfiguration);
+                service = AmazonS3ClientBuilder.standard().withRegion(config.getRegion(fsOptions))
+                		.withClientConfiguration(clientConfiguration).build();
             } else {
-                service = new AmazonS3Client(awsCredentials, clientConfiguration);
+                service = AmazonS3ClientBuilder.standard().withRegion(config.getRegion(fsOptions))
+                		.withCredentials(new CP(awsCredentials)).withClientConfiguration(clientConfiguration).build();
             }
 
-            Region region = config.getRegion(fsOptions);
-
-            if (region != null) {
-                service.setRegion(region.toAWSRegion());
-            }
         }
 
         S3FileSystem fileSystem = new S3FileSystem((S3FileName) fileName, service, fsOptions);
@@ -124,5 +125,24 @@ public class S3FileProvider extends AbstractOriginatingFileProvider {
     @Override
     public Collection<Capability> getCapabilities() {
         return capabilities;
+    }
+    
+    class CP implements AWSCredentialsProvider {
+
+    		private AWSCredentials creds;
+
+		CP(AWSCredentials creds) {
+    			this.creds = creds;
+    		}
+    		
+		@Override
+		public AWSCredentials getCredentials() {
+			return creds;
+		}
+
+		@Override
+		public void refresh() {
+		}
+    	
     }
 }

@@ -40,6 +40,7 @@ import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CanonicalGrantee;
+import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.Grant;
 import com.amazonaws.services.s3.model.Grantee;
 import com.amazonaws.services.s3.model.GroupGrantee;
@@ -94,8 +95,8 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
     @Override
     protected void doAttach() {
         if (!attached) {
-        	
-        	if(!flaggedAsFolder) {
+
+        		if(!flaggedAsFolder) {
 	            try {
 	                // Do we have file with name?
 	                String candidateKey = getS3Key();
