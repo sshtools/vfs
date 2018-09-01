@@ -4,6 +4,9 @@
 	<artifactId>vfs-rfbftp</artifactId>
 	<name>VFS RFB</name>
 	<description>VFS RFB</description>
+	<properties>
+		<rfbVersion>3.0.0</rfbVersion>
+	</properties>
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
@@ -44,19 +47,19 @@
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-common</artifactId>
-			<version>${project.version}</version>
+			<version>${rfbVersion}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-common</artifactId>
-			<version>${project.version}</version>
+			<version>${rfbVersion}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-swing</artifactId>
-			<version>${project.version}</version>
+			<version>${rfbVersion}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
