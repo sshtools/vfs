@@ -1,10 +1,8 @@
 package com.sshtools.vfs.s3.provider.s3;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.Region;
+import java.io.FileNotFoundException;
+import java.util.Collection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.Capability;
@@ -14,7 +12,11 @@ import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.provider.AbstractFileName;
 import org.apache.commons.vfs2.provider.AbstractFileSystem;
 
-import java.util.Collection;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.util.StringUtils;
 
 /**
  * An S3 file system.
@@ -27,13 +29,13 @@ public class S3FileSystem extends AbstractFileSystem {
 
     private static final Log logger = LogFactory.getLog(S3FileSystem.class);
 
-    private final AmazonS3Client service;
-    private final Bucket bucket;
+    private final AmazonS3 service;
+    private Bucket bucket = null;
 
     private boolean shutdownServiceOnClose = false;
 
     public S3FileSystem(
-            S3FileName fileName, AmazonS3Client service, FileSystemOptions fileSystemOptions
+            S3FileName fileName, AmazonS3 service, FileSystemOptions fileSystemOptions
     ) throws FileSystemException {
         super(fileName, null, fileSystemOptions);
 
@@ -42,14 +44,16 @@ public class S3FileSystem extends AbstractFileSystem {
         this.service = service;
 
         try {
-            if (service.doesBucketExist(bucketId)) {
-                bucket = new Bucket(bucketId);
-            } else {
-                bucket = service.createBucket(bucketId);
-
-                logger.debug("Created new bucket.");
-            }
-
+        		if(!StringUtils.isNullOrEmpty(bucketId)) {
+	            if (service.doesBucketExistV2(bucketId)) {
+	                bucket = new Bucket(bucketId);
+	            } else {
+	                bucket = service.createBucket(bucketId);
+	                logger.debug("Created new bucket.");
+	            }
+        		} else {
+        			throw new FileSystemException(new FileNotFoundException("A bucket name is required."));
+        		}
             logger.info("Created new S3 FileSystem " + bucketId);
         } catch (AmazonServiceException e) {
             String s3message = e.getMessage();
@@ -71,7 +75,7 @@ public class S3FileSystem extends AbstractFileSystem {
         return bucket;
     }
 
-    protected Region getRegion() {
+    protected Regions getRegion() {
         return S3FileSystemConfigBuilder.getInstance().getRegion(getFileSystemOptions());
     }
 

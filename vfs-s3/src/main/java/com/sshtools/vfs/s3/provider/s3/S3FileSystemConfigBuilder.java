@@ -3,6 +3,7 @@ package com.sshtools.vfs.s3.provider.s3;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.Region;
 import org.apache.commons.logging.Log;
@@ -75,17 +76,17 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * @param opts The FileSystemOptions.
      * @param region The S3 region to connect to (if null, then US Standard)
      */
-    public void setRegion(FileSystemOptions opts, Region region) {
-        setParam(opts, REGION, region.toString());
+    public void setRegion(FileSystemOptions opts, Regions region) {
+        setParam(opts, REGION, region.getName());
     }
 
     /**
      * @param opts The FileSystemOptions.
      * @return The S3 region to connect to (if null, then US Standard)
      */
-    public Region getRegion(FileSystemOptions opts) {
-        String r = getString(opts, REGION, "US");
-        return (r == null) ? null : Region.fromValue(r);
+    public Regions getRegion(FileSystemOptions opts) {
+        String r = getString(opts, REGION, Regions.US_EAST_1.getName());
+        return (r == null) ? null : Regions.fromName(r);
     }
 
     /**
