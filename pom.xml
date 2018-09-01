@@ -5,16 +5,18 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<commonsVFSVersion>2.1</commonsVFSVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sshtools</groupId>
 	<artifactId>vfs</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.1.0-SNAPSHOT</version>
 	<name>VFS</name>
 	<description>Various Commons VFS filesystems.</description>
 	<url>http://www.sshtools.com</url>
 	<packaging>pom</packaging>
+	<inceptionYear>2012</inceptionYear>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -35,10 +37,15 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://github.com/sshtools/jfreedesktop</url>
-		<connection>https://github.com/sshtools/jfreedesktop.git</connection>
+		<url>https://github.com/sshtools/vfs</url>
+		<connection>https://github.com/sshtools/vfs.git</connection>
 	</scm>
 	<developers>
+		<developer>
+			<id>lee</id>
+			<name>Lee David Painter</name>
+			<email>lee@sshtools.com</email>
+		</developer>
 		<developer>
 			<id>brett</id>
 			<name>Brett Smith</name>
@@ -57,7 +64,8 @@
 		<module>vfs-webdav</module>
 		<module>vfs-nfs</module>
 		<module>vfs-afp</module>
-                <module>vfs-gcs</module>
+        <module>vfs-gcs</module>
+        <module>vfs-smb-ng</module>
 	</modules>
 
 	<dependencies>

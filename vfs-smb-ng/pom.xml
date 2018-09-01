@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Dropbox Commons VFS Provider</name>
-	<description>Commons VFS implementation for DropBox (based on https://sourceforge.net/projects/vfs-dbx)</description>
-	<artifactId>vfs-dropbox</artifactId>
+	<name>SMB NG Provider</name>
+	<description>Alternative Commons VFS implementation for Windows Networking using jcifs-ng https://github.com/AgNO3/jcifs-ng</description>
+	<artifactId>vfs-smb-ng</artifactId>
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
@@ -53,9 +54,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.dropbox.core</groupId>
-			<artifactId>dropbox-core-sdk</artifactId>
-			<version>2.1.2</version>
+			<groupId>eu.agno3.jcifs</groupId>
+			<artifactId>jcifs-ng</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 	</dependencies>
 	<repositories>
