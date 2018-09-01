@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sshtools</groupId>
 	<artifactId>vfs</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<name>VFS</name>
 	<description>Various Commons VFS filesystems.</description>
 	<url>http://www.sshtools.com</url>
