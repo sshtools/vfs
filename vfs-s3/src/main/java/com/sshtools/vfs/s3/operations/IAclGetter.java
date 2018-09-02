@@ -12,15 +12,15 @@ public interface IAclGetter extends FileOperation {
 
     /**
      * Returns true when file is readable
-     * @param group
-     * @return
+     * @param group group
+     * @return can read
      */
     boolean canRead(Acl.Group group);
 
     /**
      * Returns true when file is writeable
-     * @param group
-     * @return
+     * @param group group
+     * @return can write
      */
     boolean canWrite(Acl.Group group);
 
@@ -32,7 +32,9 @@ public interface IAclGetter extends FileOperation {
 
     /**
      * Executes getter operation.
-     * Must be called before aby other operation methods
+     * Must be called before any other operation methods
+     * 
+     * @throws FileSystemException on error
      */
     @Override
     void process() throws FileSystemException;

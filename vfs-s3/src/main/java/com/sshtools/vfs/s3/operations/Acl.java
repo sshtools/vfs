@@ -82,8 +82,8 @@ public class Acl {
 
     /**
      * Allow access for a group
-     * @param group
-     * @param permission
+     * @param group group 
+     * @param permission permission
      */
     public void allow (Group group, Permission permission) {
         setRule(group, permission, (byte) 1);
@@ -91,8 +91,8 @@ public class Acl {
 
     /**
      * Set a list of permissions for a group.
-     * @param group
-     * @param permission_list
+     * @param group group
+     * @param permission_list permission list
      */
     public void allow (Group group, Permission[] permission_list) {
         setRule(group, permission_list, (byte) 1);
@@ -100,7 +100,7 @@ public class Acl {
 
     /**
      * Allow all permissions for a group
-     * @param group
+     * @param group group
      */
     public void allow (Group group) {
         setRule(group, (byte) 1);
@@ -108,6 +108,8 @@ public class Acl {
 
     /**
      * Allow specific permission for all
+     * 
+     * @param permission
      */
     public void allow (Permission permission) {
         setRule(permission, (byte) 1);
@@ -115,6 +117,8 @@ public class Acl {
 
     /**
      * Allow access for all
+     * 
+     * @param permission_list permission list
      */
     public void allow (Permission[] permission_list) {
         setRule(permission_list, (byte) 1);
@@ -129,6 +133,9 @@ public class Acl {
 
     /**
      * Deny right to group
+     * 
+     * @param group group
+     * @param permission permission
      */
     public void deny (Group group, Permission permission) {
         setRule(group, permission, (byte) 0);
@@ -136,6 +143,9 @@ public class Acl {
 
     /**
      * Deny access for a group
+     * 
+     * @param group group
+     * @param permission_list permission list
      */
     public void deny (Group group, Permission[] permission_list) {
         setRule(group, permission_list, (byte) 0);
@@ -143,7 +153,7 @@ public class Acl {
 
     /**
      * Deny all to for a group
-     * @param group
+     * @param group group
      */
     public void deny (Group group) {
         setRule(group, (byte) 0);
@@ -151,6 +161,8 @@ public class Acl {
 
     /**
      * Deny access for all
+     * 
+     * @param permission permission
      */
     public void deny (Permission permission) {
         setRule(permission, (byte) 0);
@@ -158,6 +170,8 @@ public class Acl {
 
     /**
      * Deny access for all
+     * 
+     * @param permission permission
      */
     public void deny (Permission[] permission) {
         setRule(permission, (byte) 0);
@@ -172,6 +186,9 @@ public class Acl {
 
     /**
      * Returns true when a group has specific access.
+     * 
+     * @param group group
+     * @param permission permission
      */
     public boolean isAllowed (Group group, Permission permission) {
         return rulesTable[group.ordinal()][permission.ordinal()] == 1;
@@ -179,6 +196,9 @@ public class Acl {
 
     /**
      * Returns true when specific access is denied for a group
+     * 
+     * @param group
+     * @param permission
      */
     public boolean isDenied (Group group, Permission permission) {
         return rulesTable[group.ordinal()][permission.ordinal()] == 0;
@@ -204,7 +224,7 @@ public class Acl {
     /**
      * Returns a list of allowed rules.
      *
-     * @return
+     * @return rules
      */
     public Map<Group, Permission[]> getRules() {
         if (changed) {
