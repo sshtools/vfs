@@ -40,7 +40,6 @@ import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CanonicalGrantee;
-import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.Grant;
 import com.amazonaws.services.s3.model.Grantee;
 import com.amazonaws.services.s3.model.GroupGrantee;
@@ -480,8 +479,8 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      * @return Current Access control list for a file
      * @throws FileSystemException on error
      * 
-     * @see {@link FileObject#getFileOperations()}
-     * @see {@link IAclGetter}
+     * @see FileObject#getFileOperations()
+     * @see IAclGetter
      */
     public Acl getAcl () throws FileSystemException {
         Acl myAcl = new Acl();
@@ -549,8 +548,8 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      *
      * @param acl the access control list
      * @throws FileSystemException on error
-     * @see {@link FileObject#getFileOperations()}
-     * @see {@link IAclGetter}
+     * @see FileObject#getFileOperations()
+     * @see IAclGetter
      */
     public void setAcl (Acl acl) throws FileSystemException {
 
@@ -637,6 +636,7 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
      * Get private url with access key and secret key.
      *
      * @return the private url
+     * @throws FileSystemException on error
      */
     public String getPrivateUrl() throws FileSystemException {
         AWSCredentials awsCredentials = S3FileSystemConfigBuilder.getInstance().getAWSCredentials(getFileSystem().getFileSystemOptions());
