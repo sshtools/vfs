@@ -1,19 +1,23 @@
 package com.sshtools.vfs.s3.provider.s3;
 
+import static org.apache.commons.vfs2.UserAuthenticationData.PASSWORD;
+import static org.apache.commons.vfs2.UserAuthenticationData.USERNAME;
+import static org.apache.commons.vfs2.util.UserAuthenticatorUtils.getData;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs2.FileSystem;
+import org.apache.commons.vfs2.FileSystemConfigBuilder;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.UserAuthenticationData;
+import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Region;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.vfs2.*;
-import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
-
-import static org.apache.commons.vfs2.UserAuthenticationData.PASSWORD;
-import static org.apache.commons.vfs2.UserAuthenticationData.USERNAME;
-import static org.apache.commons.vfs2.util.UserAuthenticatorUtils.getData;
 
 public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     private static final S3FileSystemConfigBuilder BUILDER = new S3FileSystemConfigBuilder();
