@@ -81,13 +81,6 @@
 			<version>1.25.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-core</artifactId>
-			<version>1.18</version>
-		</dependency>
-
 	</dependencies>
 	<repositories>
 		<repository>
