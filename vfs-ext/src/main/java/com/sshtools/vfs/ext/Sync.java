@@ -1,4 +1,4 @@
-package com.sshtools.vfs.utils;
+package com.sshtools.vfs.ext;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

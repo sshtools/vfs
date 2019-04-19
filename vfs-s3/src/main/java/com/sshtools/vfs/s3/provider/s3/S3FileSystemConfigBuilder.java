@@ -6,6 +6,7 @@ import static org.apache.commons.vfs2.util.UserAuthenticatorUtils.getData;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystem;
 import org.apache.commons.vfs2.FileSystemConfigBuilder;
 import org.apache.commons.vfs2.FileSystemException;
@@ -100,6 +101,7 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * Get whether attempts should be made to automatically switch regions when 
      * traversing into a bucket in another region.
      * 
+     * @param opts file system options
      * @return auto switch region
      */
     public boolean isAutoSwitchRegion(FileSystemOptions opts) {
@@ -110,7 +112,8 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * Set whether attempts should be made to automatically switch regions when 
      * traversing into a bucket in another region.
      * 
-     * @param autoSwitchRegion auto switch region
+     * @param opts file system options
+     * @param autoSwitch auto switch region
      */
     public void setAutoSwitchRegion(FileSystemOptions opts, boolean autoSwitch) {
     	setParam(opts, AUTO_REGION, autoSwitch);
@@ -155,6 +158,7 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
 
     /**
      * Get maximum number of threads to use for a single large (16MB or more) upload
+     * 
      * @param opts The FileSystemOptions
      * @return maximum number of threads to use for a single large (16MB or more) upload
      */
@@ -163,9 +167,10 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     }
     
     /**
-     * Get the maximum number of results that may be returned in a call to {@link FileObject#listChildren}.
+     * Get the maximum number of results that may be returned in a call to {@link FileObject#getChildren()}.
      * Any more objects than this in a single folder will be silently discarded from the list.
      * 
+     * @param opts The FileSystemOptions
      * @return max list size
      */
     public long getMaxListSize(FileSystemOptions opts) {
@@ -173,9 +178,10 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     }
     
     /**
-     * Get the maximum number of results that may be returned in a call to {@link FileObject#listChildren}.
+     * Get the maximum number of results that may be returned in a call to {@link FileObject#getChildren()}.
      * Any more objects than this in a single folder will be silently discarded from the list.
      * 
+     * @param opts The FileSystemOptions
      * @param maxListSize max list size
      */
     public void setMaxListSize(FileSystemOptions opts, long maxListSize) {
