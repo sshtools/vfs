@@ -28,8 +28,11 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     private static final String MAX_UPLOAD_THREADS = S3FileSystemConfigBuilder.class.getName() + ".MAX_UPLOAD_THREADS";
     private static final String AWS_CREDENTIALS = S3FileSystemConfigBuilder.class.getName() + ".AWS_CREDENTIALS";
     private static final String AMAZON_S3_CLIENT = S3FileSystemConfigBuilder.class.getName() + ".AMAZON_S3_CLIENT";
+    private static final String MAX_LIST_SIZE = S3FileSystemConfigBuilder.class.getName() + ".MAX_LIST_SIZE";
+    private static final String AUTO_REGION = S3FileSystemConfigBuilder.class.getName() + ".AUTO_REGION";
 
     public static final int DEFAULT_MAX_UPLOAD_THREADS = 2;
+    public static final long DEFAULT_MAX_LIST_SIZE = 1000;
 
     private static final Log log = LogFactory.getLog(S3FileSystemConfigBuilder.class);
 
@@ -81,7 +84,7 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * @param region The S3 region to connect to (if null, then US Standard)
      */
     public void setRegion(FileSystemOptions opts, Regions region) {
-        setParam(opts, REGION, region.getName());
+        setParam(opts, REGION, region == null ? "" : region.getName());
     }
 
     /**
@@ -89,8 +92,28 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * @return The S3 region to connect to (if null, then US Standard)
      */
     public Regions getRegion(FileSystemOptions opts) {
-        String r = getString(opts, REGION, Regions.US_EAST_1.getName());
-        return (r == null) ? null : Regions.fromName(r);
+        String r = getString(opts, REGION);
+        return (r == null || r.equals("")) ? null : Regions.fromName(r);
+    }
+    
+    /**
+     * Get whether attempts should be made to automatically switch regions when 
+     * traversing into a bucket in another region.
+     * 
+     * @return auto switch region
+     */
+    public boolean isAutoSwitchRegion(FileSystemOptions opts) {
+    	return getBoolean(opts, AUTO_REGION, true);
+    }
+    
+    /**
+     * Set whether attempts should be made to automatically switch regions when 
+     * traversing into a bucket in another region.
+     * 
+     * @param autoSwitchRegion auto switch region
+     */
+    public void setAutoSwitchRegion(FileSystemOptions opts, boolean autoSwitch) {
+    	setParam(opts, AUTO_REGION, autoSwitch);
     }
 
     /**
@@ -137,6 +160,26 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      */
     public int getMaxUploadThreads(FileSystemOptions opts) {
         return getInteger(opts, MAX_UPLOAD_THREADS, DEFAULT_MAX_UPLOAD_THREADS);
+    }
+    
+    /**
+     * Get the maximum number of results that may be returned in a call to {@link FileObject#listChildren}.
+     * Any more objects than this in a single folder will be silently discarded from the list.
+     * 
+     * @return max list size
+     */
+    public long getMaxListSize(FileSystemOptions opts) {
+        return getLong(opts, MAX_LIST_SIZE, DEFAULT_MAX_LIST_SIZE);
+    }
+    
+    /**
+     * Get the maximum number of results that may be returned in a call to {@link FileObject#listChildren}.
+     * Any more objects than this in a single folder will be silently discarded from the list.
+     * 
+     * @param maxListSize max list size
+     */
+    public void setMaxListSize(FileSystemOptions opts, long maxListSize) {
+        setParam(opts, MAX_LIST_SIZE, maxListSize);
     }
 
     /**

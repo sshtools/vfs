@@ -68,7 +68,7 @@ public class S3FileNameParser extends AbstractFileNameParser {
         // Extract bucket name
         final String bucketName = UriParser.extractFirstElement(name);
 
-        return new S3FileName(scheme, accessKey, secretKey, bucketName,  checkStartsWithSlash(name.toString()), fileType);
+        return new S3FileName(scheme, bucketName,  accessKey, secretKey, checkStartsWithSlash(name.toString()), fileType);
     }
 
     private String checkStartsWithSlash(String str) {
