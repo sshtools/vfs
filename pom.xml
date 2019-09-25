@@ -4,7 +4,7 @@
 	<properties>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.source>1.7</maven.compiler.source>
-		<commonsVFSVersion>2.1</commonsVFSVersion>
+		<commonsVFSVersion>2.4.1</commonsVFSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
