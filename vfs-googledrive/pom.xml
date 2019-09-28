@@ -31,8 +31,9 @@
 		</testResources>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-site-plugin</artifactId>
+			    <version>3.8.2</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -47,7 +48,7 @@
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
-			<version>v3-rev136-1.25.0</version>
+    		<version>v3-rev173-1.25.0</version>
 		</dependency>
 
 		<dependency>

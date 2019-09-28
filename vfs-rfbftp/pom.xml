@@ -31,6 +31,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+			    <version>3.8.2</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -44,19 +45,13 @@
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-common</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sshtools</groupId>
-			<artifactId>rfb-viewer-common</artifactId>
-			<version>3.0.0</version>
+			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-swing</artifactId>
-			<version>3.0.0</version>
+			<version>3.0.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
