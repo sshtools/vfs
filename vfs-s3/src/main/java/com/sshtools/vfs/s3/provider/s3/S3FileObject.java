@@ -584,6 +584,7 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 		case BUCKET:
 			return getBucket().getCreationDate().getTime();
 		default:
+			doAttach();
 			return objectMetadata.getLastModified().getTime();
 		}
 	}
@@ -823,6 +824,7 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 		case BUCKET:
 			return false;
 		default:
+			doAttach();
 			long oldModified = objectMetadata.getLastModified().getTime();
 			boolean differentModifiedTime = oldModified != modtime;
 			if (differentModifiedTime) {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.vfs2.AllFileSelector;
+import org.apache.commons.vfs2.FileContent;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -54,7 +55,8 @@ public class Sync {
 
 		@Override
 		public void tag(Result result, FileObject incoming, FileObject existing) throws FileSystemException {
-			existing.getContent().setLastModifiedTime(incoming.getContent().getLastModifiedTime());
+			FileContent content = incoming == null ? null : incoming.getContent();
+			existing.getContent().setLastModifiedTime(content == null ? System.currentTimeMillis() : content.getLastModifiedTime());
 		}
 	}
 
