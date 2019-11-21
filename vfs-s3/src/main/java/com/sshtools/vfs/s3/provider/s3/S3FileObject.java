@@ -585,7 +585,8 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 			return getBucket().getCreationDate().getTime();
 		default:
 			doAttach();
-			return objectMetadata.getLastModified().getTime();
+			Date lastModified = objectMetadata.getLastModified();
+			return lastModified == null ? System.currentTimeMillis() : lastModified.getTime();
 		}
 	}
 
@@ -825,7 +826,8 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 			return false;
 		default:
 			doAttach();
-			long oldModified = objectMetadata.getLastModified().getTime();
+			Date lastMod = objectMetadata.getLastModified();
+			long oldModified = lastMod == null ? 0 : lastMod.getTime();
 			boolean differentModifiedTime = oldModified != modtime;
 			if (differentModifiedTime) {
 				objectMetadata.setLastModified(new Date(modtime));
