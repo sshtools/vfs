@@ -256,7 +256,14 @@ public class EventFiringFileSystemManager extends DefaultFileSystemManager
 
 				@Override
 				public OutputStream getOutputStream() throws FileSystemException {
-					return new FilterOutputStream(content.getOutputStream()) {
+					final OutputStream contentOut = content.getOutputStream();
+					return new FilterOutputStream(contentOut) {
+						
+						@Override
+						public void write(byte[] b, int off, int len) throws IOException {
+							contentOut.write(b, off, len);
+						}
+
 						@Override
 						public void close() throws IOException {
 							try {

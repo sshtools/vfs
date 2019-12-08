@@ -462,7 +462,13 @@ public class DropboxFileObject extends AbstractFileObject<DropboxFileSystem> {
 			if (bAppend) {
 				// out = client.appendFileStream(relPath);
 			} else {
-				out = new FilterOutputStream(client.storeFileStream(getAbsPath())) {
+				final OutputStream storeOut = client.storeFileStream(getAbsPath());
+				out = new FilterOutputStream(storeOut) {
+					@Override
+					public void write(byte[] b, int off, int len) throws IOException {
+						storeOut.write(b, off, len);
+					}
+
 					@Override
 					public void close() throws IOException {
 						try {
