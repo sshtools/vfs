@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.0.2</version>
+		<version>3.1.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<build>
@@ -32,6 +32,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+				<version>3.8.2</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -59,16 +60,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<distributionManagement>
-		<repository>
-			<id>opensource-releases</id>
-			<url>http://artifactory.javassh.com/opensource-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>opensource-snapshots</id>
-			<url>http://artifactory.javassh.com/opensource-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>sonatype</id>

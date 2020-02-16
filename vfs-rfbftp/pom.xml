@@ -4,13 +4,10 @@
 	<artifactId>vfs-rfbftp</artifactId>
 	<name>VFS RFB</name>
 	<description>VFS RFB</description>
-	<properties>
-		<rfbVersion>3.0.0</rfbVersion>
-	</properties>
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.0.2</version>
+		<version>3.1.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<build>
@@ -34,6 +31,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+			    <version>3.8.2</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -47,19 +45,13 @@
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-common</artifactId>
-			<version>${rfbVersion}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sshtools</groupId>
-			<artifactId>rfb-viewer-common</artifactId>
-			<version>${rfbVersion}</version>
+			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sshtools</groupId>
 			<artifactId>rfb-viewer-swing</artifactId>
-			<version>${rfbVersion}</version>
+			<version>3.0.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

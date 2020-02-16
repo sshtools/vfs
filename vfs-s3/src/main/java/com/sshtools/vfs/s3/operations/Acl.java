@@ -23,7 +23,7 @@ import java.util.Map;
  * </code>
  *
  * @author Marat Komarov
- * @author Alex Kovalyov &lt;alex@intridea.com&gt;
+ * @author Alex Kovalyov &lt;alex&amp;intridea.com&lt;
  *
  */
 public class Acl {

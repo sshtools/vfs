@@ -6,6 +6,7 @@ import static org.apache.commons.vfs2.util.UserAuthenticatorUtils.getData;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystem;
 import org.apache.commons.vfs2.FileSystemConfigBuilder;
 import org.apache.commons.vfs2.FileSystemException;
@@ -28,8 +29,11 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
     private static final String MAX_UPLOAD_THREADS = S3FileSystemConfigBuilder.class.getName() + ".MAX_UPLOAD_THREADS";
     private static final String AWS_CREDENTIALS = S3FileSystemConfigBuilder.class.getName() + ".AWS_CREDENTIALS";
     private static final String AMAZON_S3_CLIENT = S3FileSystemConfigBuilder.class.getName() + ".AMAZON_S3_CLIENT";
+    private static final String MAX_LIST_SIZE = S3FileSystemConfigBuilder.class.getName() + ".MAX_LIST_SIZE";
+    private static final String AUTO_REGION = S3FileSystemConfigBuilder.class.getName() + ".AUTO_REGION";
 
     public static final int DEFAULT_MAX_UPLOAD_THREADS = 2;
+    public static final long DEFAULT_MAX_LIST_SIZE = 1000;
 
     private static final Log log = LogFactory.getLog(S3FileSystemConfigBuilder.class);
 
@@ -81,7 +85,7 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * @param region The S3 region to connect to (if null, then US Standard)
      */
     public void setRegion(FileSystemOptions opts, Regions region) {
-        setParam(opts, REGION, region.getName());
+        setParam(opts, REGION, region == null ? "" : region.getName());
     }
 
     /**
@@ -89,8 +93,30 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      * @return The S3 region to connect to (if null, then US Standard)
      */
     public Regions getRegion(FileSystemOptions opts) {
-        String r = getString(opts, REGION, Regions.US_EAST_1.getName());
-        return (r == null) ? null : Regions.fromName(r);
+        String r = getString(opts, REGION);
+        return (r == null || r.equals("")) ? null : Regions.fromName(r);
+    }
+    
+    /**
+     * Get whether attempts should be made to automatically switch regions when 
+     * traversing into a bucket in another region.
+     * 
+     * @param opts file system options
+     * @return auto switch region
+     */
+    public boolean isAutoSwitchRegion(FileSystemOptions opts) {
+    	return getBoolean(opts, AUTO_REGION, true);
+    }
+    
+    /**
+     * Set whether attempts should be made to automatically switch regions when 
+     * traversing into a bucket in another region.
+     * 
+     * @param opts file system options
+     * @param autoSwitch auto switch region
+     */
+    public void setAutoSwitchRegion(FileSystemOptions opts, boolean autoSwitch) {
+    	setParam(opts, AUTO_REGION, autoSwitch);
     }
 
     /**
@@ -132,11 +158,34 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
 
     /**
      * Get maximum number of threads to use for a single large (16MB or more) upload
+     * 
      * @param opts The FileSystemOptions
      * @return maximum number of threads to use for a single large (16MB or more) upload
      */
     public int getMaxUploadThreads(FileSystemOptions opts) {
         return getInteger(opts, MAX_UPLOAD_THREADS, DEFAULT_MAX_UPLOAD_THREADS);
+    }
+    
+    /**
+     * Get the maximum number of results that may be returned in a call to {@link FileObject#getChildren()}.
+     * Any more objects than this in a single folder will be silently discarded from the list.
+     * 
+     * @param opts The FileSystemOptions
+     * @return max list size
+     */
+    public long getMaxListSize(FileSystemOptions opts) {
+        return getLong(opts, MAX_LIST_SIZE, DEFAULT_MAX_LIST_SIZE);
+    }
+    
+    /**
+     * Get the maximum number of results that may be returned in a call to {@link FileObject#getChildren()}.
+     * Any more objects than this in a single folder will be silently discarded from the list.
+     * 
+     * @param opts The FileSystemOptions
+     * @param maxListSize max list size
+     */
+    public void setMaxListSize(FileSystemOptions opts, long maxListSize) {
+        setParam(opts, MAX_LIST_SIZE, maxListSize);
     }
 
     /**
@@ -154,7 +203,6 @@ public class S3FileSystemConfigBuilder extends FileSystemConfigBuilder {
      *
      * @param options options
      * @return credentials
-     * @throws FileSystemException on error
      */
     public AWSCredentials getAWSCredentials(FileSystemOptions options) throws FileSystemException {
         AWSCredentials credentials = (AWSCredentials) getParam(options, AWS_CREDENTIALS);

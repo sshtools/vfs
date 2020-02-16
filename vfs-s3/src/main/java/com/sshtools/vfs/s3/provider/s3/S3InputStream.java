@@ -45,11 +45,22 @@ public class S3InputStream extends InputStream {
 		return r;
 	}
 	
+	@Override
+	public void close() throws IOException {
+		try {
+			if(in != null)
+				in.close();
+		}
+		finally {
+			if(obj != null)
+				obj.close();
+			closed = true;
+		}
+	}
+
 	private void checkClose(int r) throws IOException {
 		if(r==-1) {
-			in.close();
-			obj.close();
-			closed = true;
+			close();
 		}
 	}
 

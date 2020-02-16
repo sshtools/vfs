@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.s3.provider.s3.S3FileProvider">
+		<scheme name="s3" />
+        <if-available class-name="com.amazonaws.services.s3.AmazonS3"/>
+	</provider>
+</providers>

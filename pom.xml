@@ -4,14 +4,14 @@
 	<properties>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.source>1.7</maven.compiler.source>
-		<commonsVFSVersion>2.1</commonsVFSVersion>
+		<commonsVFSVersion>2.4.1</commonsVFSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sshtools</groupId>
 	<artifactId>vfs</artifactId>
-	<version>3.0.2</version>
+	<version>3.1.0</version>
 	<name>VFS</name>
 	<description>Various Commons VFS filesystems.</description>
 	<url>http://www.sshtools.com</url>
@@ -65,6 +65,7 @@
 		<module>vfs-nfs</module>
 		<module>vfs-afp</module>
         <module>vfs-gcs</module>
+        <module>vfs-smb-ng</module>
 	</modules>
 
 	<dependencies>
@@ -101,10 +102,6 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>

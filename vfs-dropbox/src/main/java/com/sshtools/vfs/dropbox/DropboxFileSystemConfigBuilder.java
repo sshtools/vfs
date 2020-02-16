@@ -99,6 +99,13 @@ public final class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilde
         setParam(opts, SO_TIMEOUT, soTimeout);
     }
 
+    /**
+     * Set encoding.
+     * 
+     * @param opts The FileSystemOptions.
+     * @param encoding the encoding to use
+     * @since 2.0
+     */
     public void setControlEncoding(FileSystemOptions opts, String encoding)
     {
         setParam(opts, ENCODING, encoding);

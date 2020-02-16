@@ -15,6 +15,6 @@ public interface IMD5HashGetter extends FileOperation {
      *
      * @return hash
      * @throws FileSystemException on error
-     */ 
+     */
     String getMD5Hash() throws FileSystemException;
 }

@@ -18,7 +18,7 @@ public class GoogleFileName extends AbstractFileName {
 	@Override
 	protected void appendRootUri(StringBuilder buffer, boolean addPassword) {
 		buffer.append(getScheme());
-        buffer.append(":");
+        buffer.append("://");
 	}
 
 }

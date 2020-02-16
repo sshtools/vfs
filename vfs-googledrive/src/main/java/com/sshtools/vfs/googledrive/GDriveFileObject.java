@@ -232,11 +232,15 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 		final GDriveFileObject parent = (GDriveFileObject) getParent();
 		final PipedOutputStream pout = new PipedOutputStream();
 		final PipedInputStream pin = new PipedInputStream(pout);
-		final String mimeType = ((GDriveFileSystem) getFileSystem()).getTika().detect(getName().getBaseName());
-		final AbstractInputStreamContent in = new InputStreamContent(mimeType, pin);
+		/**
+		 * LDP - MimeType can be null to allow google system to determine this. Tika seems to be
+		 * removed from the latest dependencies so this seemed the more straight forward approach.
+		 */
+//		final String mimeType = (GDriveFileSystem) getFileSystem()).getTika().detect(getName().getBaseName());
+		final AbstractInputStreamContent in = new InputStreamContent(null, pin);
 		if (file == null) {
 			file = new File();
-			file.setMimeType(mimeType);
+//			file.setMimeType(mimeType);
 			file.setName(getName().getBaseName());
 			if (parent.file != null)
 				file.setParents(Arrays.asList(parent.file.getId()));
