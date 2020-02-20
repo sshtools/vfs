@@ -1,0 +1,5 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.ldap.LDAPFileProvider">
+		<scheme name="ldap" />
+	</provider>
+</providers>
