@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Commons VFS extensions and utilities</name>
-	<description>Commons VFS extensions.</description>
+	<name>Commons VFS extensions</name>
+	<description>Commons VFS extensions and utilities</description>
 	<artifactId>vfs-ext</artifactId>
 	<parent>
 		<groupId>com.sshtools</groupId>

@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>NFS Commons VFS Provider</name>
-	<description>An NFS VFS provider.</description>
+	<name>NFS VFS</name>
+	<description>NFS Commons VFS provider</description>
 	<artifactId>vfs-nfs</artifactId>
 	<parent>
 		<groupId>com.sshtools</groupId>

@@ -2,8 +2,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>SMB NG Provider</name>
-	<description>Alternative Commons VFS implementation for Windows Networking using jcifs-ng https://github.com/AgNO3/jcifs-ng</description>
+	<name>SMB VFS</name>
+	<description>Commons VFS provider for Windows Networking using jcifs-ng https://github.com/AgNO3/jcifs-ng</description>
 	<artifactId>vfs-smb-ng</artifactId>
 	<parent>
 		<groupId>com.sshtools</groupId>

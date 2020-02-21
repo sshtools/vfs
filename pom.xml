@@ -67,6 +67,7 @@
         <module>vfs-gcs</module>
         <module>vfs-smb-ng</module>
 		<module>vfs-ldap</module>
+		<module>vfs-sftp</module>
 	</modules>
 
 	<dependencies>

@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>WebDAV Commons VFS Provider</name>
-	<description>A WebDAV Commons VFS provider which is a fork of commons-vfs-webdav-sardine (and thus Sardine based too). Currently minor bug fixes, alignment with latest HTTPClient library and other tweaks.</description>
+	<name>WebDAV VFS</name>
+	<description>WebDAV Commons VFS provider which is a fork of commons-vfs-webdav-sardine (and thus Sardine based too). Currently minor bug fixes, alignment with latest HTTPClient library and other tweaks.</description>
 	<artifactId>vfs-webdav</artifactId>
 	<parent>
 		<groupId>com.sshtools</groupId>
