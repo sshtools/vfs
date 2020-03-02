@@ -13,6 +13,7 @@ import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 import com.sshtools.client.PublicKeyAuthenticator;
 import com.sshtools.client.SshClient;
 import com.sshtools.common.publickey.SshPrivateKeyFileFactory;
+import com.sshtools.common.ssh.SshConnection;
 import com.sshtools.common.ssh.components.SshKeyPair;
 
 public class SftpClientFactory {
@@ -26,18 +27,18 @@ public class SftpClientFactory {
 		SftpClientFactory.socketFactory = socketFactory;
 	}
 
-	public static SshClient createConnection(String hostname, int port,
+	public static SshConnection createConnection(String hostname, int port,
 			String username, String password,
 			FileSystemOptions fileSystemOptions) throws FileSystemException {
 
 		// The file system options may already have a client
-		SshClient ssh = SftpFileSystemConfigBuilder.getInstance().getSshClient(fileSystemOptions);
+		SshConnection ssh = SftpFileSystemConfigBuilder.getInstance().getSshConnection(fileSystemOptions);
 		if(ssh != null) {
 			return ssh;
 		}
 
 		try {
-			
+			SshClient client = null;
 			
 			if (username == null || password == null) {
 				UserAuthenticator ua = DefaultFileSystemConfigBuilder
@@ -58,11 +59,11 @@ public class SftpClientFactory {
 					password = new String(data
 							.getData(UserAuthenticationData.PASSWORD));
 					
-					ssh = new SshClient(hostname, port, username, password.toCharArray());
+					client = new SshClient(hostname, port, username, password.toCharArray());
 				}
 			}	
 			
-			if(Objects.isNull(ssh) || !ssh.isAuthenticated()) {
+			if(Objects.isNull(client) || !client.isAuthenticated()) {
 				
 				
 				SshKeyPair pair = null;
@@ -81,17 +82,19 @@ public class SftpClientFactory {
 				}
 				
 				if(Objects.isNull(ssh)) {
-					ssh = new SshClient(hostname, port, username, pair);
+					client = new SshClient(hostname, port, username, pair);
 				} else {
-					ssh.authenticate(new PublicKeyAuthenticator(pair), 30000);
+					client.authenticate(new PublicKeyAuthenticator(pair), 30000);
 				}
 			}
 
-			if (!ssh.isAuthenticated()) {
+			if (!client.isAuthenticated()) {
 				throw new FileSystemException("vfs.provider.sftp/authentication-failed.error",
 						new Object[] { username });
 			}
 
+			ssh = client.getConnection();
+			
 		} catch (FileSystemException fse) {
 			throw fse;
 		} catch (final Exception ex) {

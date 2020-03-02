@@ -14,15 +14,16 @@ import org.apache.commons.vfs2.provider.GenericFileName;
 import com.sshtools.client.SshClient;
 import com.sshtools.client.sftp.SftpClient;
 import com.sshtools.common.logger.Log;
+import com.sshtools.common.ssh.SshConnection;
 
 public class SftpFileSystem extends AbstractFileSystem {
 
-	private SshClient ssh;
+	private SshConnection ssh;
 	private SftpClient sftp;
 
 	private String home;
 
-	protected SftpFileSystem(final GenericFileName rootName, final SshClient ssh, final FileSystemOptions fileSystemOptions) {
+	protected SftpFileSystem(final GenericFileName rootName, final SshConnection ssh, final FileSystemOptions fileSystemOptions) {
 		super(rootName, null, fileSystemOptions);
 		this.ssh = ssh;
 	}
@@ -47,7 +48,7 @@ public class SftpFileSystem extends AbstractFileSystem {
 
 	protected synchronized SftpClient getClient() throws IOException {
 		if (this.ssh == null) {
-			SshClient ssh;
+			SshConnection ssh;
 			try {
 				final GenericFileName rootName = (GenericFileName) getRootName();
 

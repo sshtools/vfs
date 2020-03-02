@@ -5,8 +5,9 @@ import java.io.File;
 import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 
-import com.sshtools.client.SshClient;
+import com.sshtools.client.sftp.SftpClient;
 import com.sshtools.common.knownhosts.HostKeyVerification;
+import com.sshtools.common.ssh.SshConnection;
 
 public class SftpFileSystemConfigBuilder extends DefaultFileSystemConfigBuilder {
     private final static SftpFileSystemConfigBuilder builder = new
@@ -34,12 +35,20 @@ public class SftpFileSystemConfigBuilder extends DefaultFileSystemConfigBuilder 
 		return (HostKeyVerification)getParam(opts, "hostKeyVerification");
 	}
 	
-    public void setSshClient(FileSystemOptions opts, SshClient sshClient) {
-    	setParam(opts, "sshClient", sshClient);
+	public void setSftpClient(FileSystemOptions opts, SftpClient sftpClient) {
+		setParam(opts, "sftpClient", sftpClient);
+	}
+	
+	public SftpClient getSftpClient(FileSystemOptions opts) {
+		return (SftpClient) getParam(opts, "sftpClient");
+	}
+	
+    public void setSshConnection(FileSystemOptions opts, SshConnection sshClient) {
+    	setParam(opts, "sshConnection", sshClient);
     }
     
-    public SshClient getSshClient(FileSystemOptions opts) {
-        return (SshClient) getParam(opts, "sshClient");
+    public SshConnection getSshConnection(FileSystemOptions opts) {
+        return (SshConnection) getParam(opts, "sshConnection");
     }
     
     public void setCharset(FileSystemOptions opts, String charset) {

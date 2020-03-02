@@ -13,7 +13,7 @@ import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.provider.AbstractOriginatingFileProvider;
 import org.apache.commons.vfs2.provider.GenericFileName;
 
-import com.sshtools.client.SshClient;
+import com.sshtools.common.ssh.SshConnection;
 
 public class SftpFileProvider extends AbstractOriginatingFileProvider {
 
@@ -33,7 +33,7 @@ public class SftpFileProvider extends AbstractOriginatingFileProvider {
 		// Create the file system
 		final GenericFileName rootName = (GenericFileName) name;
 
-		SshClient ssh;
+		SshConnection ssh;
 		try {
 			ssh = SftpClientFactory.createConnection(rootName.getHostName(), rootName.getPort(), rootName.getUserName(),
 				rootName.getPassword(), fileSystemOptions);
