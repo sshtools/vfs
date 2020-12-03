@@ -19,6 +19,7 @@ public class GDriveFileNameParser extends HostFileNameParser {
 		super(443);
 	}
 
+	@Override
 	public FileName parseUri(final VfsComponentContext context, FileName base, String filename)
 			throws FileSystemException {
 		final StringBuilder name = new StringBuilder();
@@ -29,13 +30,16 @@ public class GDriveFileNameParser extends HostFileNameParser {
 		int eidx = filename.indexOf("@/");
 		if (eidx != -1) 
 			filename = filename.substring(0,  eidx + 1) + "google.com" + filename.substring(eidx + 1);
-		
+
+		String scheme;
 		try {
 			auth = extractToPath(filename, name);
 			if (auth.getUserName() == null) {
-				UriParser.extractScheme(filename, name);
+				scheme = UriParser.extractScheme(filename, name);
 				UriParser.canonicalizePath(name, 0, name.length(), this);
 				UriParser.fixSeparators(name);
+			} else {
+				scheme = auth.getScheme();
 			}
 			fileType = UriParser.normalisePath(name);
 			path = name.toString();
@@ -43,7 +47,7 @@ public class GDriveFileNameParser extends HostFileNameParser {
 				path = "/";
 			}
 		} catch (FileSystemException fse) {
-			UriParser.extractScheme(filename, name);
+			scheme = UriParser.extractScheme(filename, name);
 			UriParser.canonicalizePath(name, 0, name.length(), this);
 			UriParser.fixSeparators(name);
 			// final String rootFile = extractRootPrefix(filename, name);
@@ -51,8 +55,7 @@ public class GDriveFileNameParser extends HostFileNameParser {
 			path = name.toString();
 
 		}
-		return new GDriveFileName(auth == null ? null : auth.getUserName(), auth == null ? null : auth.getPassword(),
-				path, fileType);
+		return new GDriveFileName(scheme, path, fileType);
 	}
 
 }
