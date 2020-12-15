@@ -84,6 +84,11 @@ public class GoogleFileObject extends AbstractFileObject<GoogleStorageFileSystem
 			}
 		}
 	}
+
+	@Override
+	protected void onChange() throws IOException {
+		this.refresh();
+	}
 	
 	@Override
 	protected long doGetContentSize() throws Exception {
