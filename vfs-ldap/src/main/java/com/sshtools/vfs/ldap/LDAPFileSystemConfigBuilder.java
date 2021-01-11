@@ -13,7 +13,7 @@ import org.apache.commons.vfs2.FileSystemOptions;
 
 public class LDAPFileSystemConfigBuilder extends FileSystemConfigBuilder {
 	private final static LDAPFileSystemConfigBuilder builder = new LDAPFileSystemConfigBuilder();
-	private static final int DEFAULT_MAX_ENTRIES = 1000;
+	private static final int DEFAULT_PAGE_SIZE = 1000;
 	private static final String[] DEFAULT_FILE_OBJECT_CLASSES = { "organizationPerson", "user", "person", "group", "logonboxUser",
 			"logonboxGroup" };
 	private static final String[] DEFAULT_FOLDER_OBJECT_CLASSES = { "container", "logonboxContainer", "domain", "logonboxRealm",
@@ -34,22 +34,12 @@ public class LDAPFileSystemConfigBuilder extends FileSystemConfigBuilder {
 		return (String) getParam(opts, "ldapAuth");
 	}
 
-	public void setMaxEntriesPerFolder(FileSystemOptions opts, int maxEntriesPerFolder) {
-		setParam(opts, "maxEntriesPerFolder", maxEntriesPerFolder);
-	}
-
-	public int getMaxEntriesPerFolder(FileSystemOptions opts) {
-		Integer i = (Integer) getParam(opts, "EntriesPerFolder");
-		return i == null ? DEFAULT_MAX_ENTRIES : i;
-	}
-
-	public void setSocketFactory(FileSystemOptions opts, Class<? extends SocketFactory> socketFactory) {
+	public void setSocketFactory(FileSystemOptions opts, SocketFactory socketFactory) {
 		setParam(opts, "socketFactory", socketFactory);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Class<? extends SocketFactory> getSocketFactory(FileSystemOptions opts) {
-		return (Class<? extends SocketFactory>) getParam(opts, "socketFactory");
+	public SocketFactory getSocketFactory(FileSystemOptions opts) {
+		return (SocketFactory) getParam(opts, "socketFactory");
 	}
 
 	public void setMaxPageSize(FileSystemOptions opts, int maxPageSize) {
@@ -57,7 +47,8 @@ public class LDAPFileSystemConfigBuilder extends FileSystemConfigBuilder {
 	}
 
 	public int getMaxPageSize(FileSystemOptions opts) {
-		return (Integer) getParam(opts, "maxPageSize");
+		Integer mps = (Integer) getParam(opts, "maxPageSize");
+		return mps == null ? DEFAULT_PAGE_SIZE : mps;
 	}
 
 	public void setFollowReferrals(FileSystemOptions opts, boolean followReferals) {
@@ -65,7 +56,8 @@ public class LDAPFileSystemConfigBuilder extends FileSystemConfigBuilder {
 	}
 
 	public boolean isFollowReferrals(FileSystemOptions opts) {
-		return (Boolean) getParam(opts, "followReferrals");
+		Boolean fr = (Boolean) getParam(opts, "followReferrals");
+		return fr == null ? false : fr;
 	}
 
 	@Override

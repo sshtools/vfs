@@ -137,9 +137,15 @@ public class LDAPFileObject extends AbstractFileObject<LDAPFileSystem> {
 				if (val.size() == 0)
 					attributes.put(val.getID(), "");
 				else {
-					for (NamingEnumeration<?> ne = val.getAll(); ne.hasMoreElements();) {
-						Object v = ne.nextElement();
-						attributes.put(val.getID(), String.valueOf(v));
+					if (val.size() == 1) {
+						attributes.put(val.getID(), String.valueOf(val.get(0)));
+					} else {
+						int idx = 0;
+						for (NamingEnumeration<?> ne = val.getAll(); ne.hasMoreElements();) {
+							Object v = ne.nextElement();
+							attributes.put(val.getID() + "[" + idx + "]", String.valueOf(v));
+							idx++;
+						}
 					}
 				}
 			} catch (Exception e) {

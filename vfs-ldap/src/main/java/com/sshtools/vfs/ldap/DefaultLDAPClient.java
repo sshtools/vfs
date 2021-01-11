@@ -34,44 +34,57 @@ public class DefaultLDAPClient implements LDAPClient {
 	public static final String WILDCARD_SEARCH = "*";
 	public static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
 	private Hashtable<String, String> env = new Hashtable<String, String>();
-	private FileSystemOptions fileSystemOptions;
 	private InitialDirContext initDirContext;
 	private GenericFileName rootName;
 	private Name[] baseDns;
 
-	public DefaultLDAPClient(GenericFileName rootName, FileSystemOptions fileSystemOptions) throws NamingException, URISyntaxException {
+	public DefaultLDAPClient(GenericFileName rootName, FileSystemOptions fileSystemOptions)
+			throws NamingException, URISyntaxException {
 		this.rootName = rootName;
-		this.fileSystemOptions = fileSystemOptions;
 		URI uri = new URI(rootName.getFriendlyURI());
-		env.put(Context.PROVIDER_URL, uri.getScheme() + "://" + uri.getHost() + ( uri.getPort() == -1 ? "" : ":" + uri.getPort()));
-		UserAuthenticationData authData = UserAuthenticatorUtils.authenticate(fileSystemOptions, AUTHENTICATOR_TYPES);
-		String username = UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.USERNAME,
-				UserAuthenticatorUtils.toChar(rootName.getUserName())));
-		String password = UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData, UserAuthenticationData.PASSWORD,
-				UserAuthenticatorUtils.toChar(rootName.getPassword())));
-		if (username != null)
-			env.put(Context.SECURITY_PRINCIPAL, username);
-		if (password != null)
-			env.put(Context.SECURITY_CREDENTIALS, password);
-		Class<? extends SocketFactory> fact = LDAPFileSystemConfigBuilder.getInstance().getSocketFactory(fileSystemOptions);
+		String ldapUrl = uri.getScheme() + "://" + uri.getHost() + (uri.getPort() == -1 ? "" : ":" + uri.getPort());
+		if (uri.getPath() != null && !uri.getPath().equals("") && !uri.getPath().equals("/"))
+			ldapUrl += "/" + uri.getPath();
+		env.put(Context.PROVIDER_URL, ldapUrl);
+		if (uri.getUserInfo() != null) {
+			UserAuthenticationData authData = UserAuthenticatorUtils.authenticate(fileSystemOptions, AUTHENTICATOR_TYPES);
+			String username = UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData,
+					UserAuthenticationData.USERNAME, UserAuthenticatorUtils.toChar(rootName.getUserName())));
+			String password = UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData,
+					UserAuthenticationData.PASSWORD, UserAuthenticatorUtils.toChar(rootName.getPassword())));
+			if (username != null)
+				env.put(Context.SECURITY_PRINCIPAL, username);
+			if (password != null)
+				env.put(Context.SECURITY_CREDENTIALS, password);
+		} else {
+			env.put(Context.SECURITY_AUTHENTICATION, "none");
+		}
+		SocketFactory fact = LDAPFileSystemConfigBuilder.getInstance().getSocketFactory(fileSystemOptions);
 		if (fact != null) {
-			env.put(LDAP_SOCKET_FACTORY, fact.getName());
+			env.put(LDAP_SOCKET_FACTORY, ThreadLocalSocketFactory.class.getName());
+			ThreadLocalSocketFactory.set(fact);
 		}
-		configureSocket(env);
-		initDirContext = new InitialDirContext(env);
-		// lookupContext(configuration.getBaseDn());
-		Attributes rootAttrs = initDirContext.getAttributes("", new String[] { "namingcontexts" });
-		if(rootAttrs == null)
-			throw new NamingException("Could not find namingcontexts attributes");
-		Attribute nc = rootAttrs.get("namingcontexts");
-		List<Name> bdn = new ArrayList<Name>();
-		for(NamingEnumeration<?> ne = nc.getAll(); ne.hasMoreElements(); ) {
-			Object v = ne.nextElement();
-			bdn.add(new LdapName(v.toString()));
+		try {
+			configureSocket(env);
+			initDirContext = new InitialDirContext(env);
+			// lookupContext(configuration.getBaseDn());
+			Attributes rootAttrs = initDirContext.getAttributes("", new String[] { "namingcontexts" });
+			if (rootAttrs == null)
+				throw new NamingException("Could not find namingcontexts attributes");
+			Attribute nc = rootAttrs.get("namingcontexts");
+			List<Name> bdn = new ArrayList<Name>();
+			for (NamingEnumeration<?> ne = nc.getAll(); ne.hasMoreElements();) {
+				Object v = ne.nextElement();
+				bdn.add(new LdapName(v.toString()));
+			}
+			baseDns = bdn.toArray(new Name[0]);
+		} finally {
+			if (fact != null) {
+				ThreadLocalSocketFactory.remove();
+			}
 		}
-		baseDns = bdn.toArray(new Name[0]);
 	}
-	
+
 	public FileName getRootFileName() {
 		return rootName;
 	}
@@ -96,8 +109,8 @@ public class DefaultLDAPClient implements LDAPClient {
 
 	private void configureSocket(Hashtable<String, String> env) {
 		env.put("com.sun.jndi.ldap.connect.pool", "false");
-		env.put("com.sun.jndi.ldap.connect.pool.debug", "all");
-		env.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory");
+		// env.put("com.sun.jndi.ldap.connect.pool.debug", "all");
+		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		// env.put("com.sun.jndi.ldap.connect.pool.protocol", "plain ssl");
 	}
 
