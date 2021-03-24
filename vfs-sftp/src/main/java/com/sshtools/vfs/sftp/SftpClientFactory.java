@@ -8,7 +8,6 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.UserAuthenticationData;
 import org.apache.commons.vfs2.UserAuthenticator;
-import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 
 import com.sshtools.client.PublicKeyAuthenticator;
 import com.sshtools.client.SshClient;
@@ -41,8 +40,7 @@ public class SftpClientFactory {
 			SshClient client = null;
 			
 			if (username == null || password == null) {
-				UserAuthenticator ua = DefaultFileSystemConfigBuilder
-						.getInstance().getUserAuthenticator(fileSystemOptions);
+				UserAuthenticator ua = SftpFileSystemConfigBuilder.getInstance().getUserAuthenticator(fileSystemOptions);
 
 				if(ua!=null) {
 					UserAuthenticationData data = ua

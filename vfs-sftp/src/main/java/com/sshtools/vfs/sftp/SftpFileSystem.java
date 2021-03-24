@@ -11,7 +11,6 @@ import org.apache.commons.vfs2.provider.AbstractFileName;
 import org.apache.commons.vfs2.provider.AbstractFileSystem;
 import org.apache.commons.vfs2.provider.GenericFileName;
 
-import com.sshtools.client.SshClient;
 import com.sshtools.client.sftp.SftpClient;
 import com.sshtools.common.logger.Log;
 import com.sshtools.common.ssh.SshConnection;
