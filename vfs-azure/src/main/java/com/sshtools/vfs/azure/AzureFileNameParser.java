@@ -19,7 +19,6 @@ public class AzureFileNameParser extends HostFileNameParser {
 		super(443);
 	}
 
-	@Override
 	public FileName parseUri(final VfsComponentContext context, FileName base, String filename)
 			throws FileSystemException {
 		final StringBuilder name = new StringBuilder();
@@ -30,16 +29,13 @@ public class AzureFileNameParser extends HostFileNameParser {
 		int eidx = filename.indexOf("@/");
 		if (eidx != -1) 
 			filename = filename.substring(0,  eidx + 1) + "windowsazure.com" + filename.substring(eidx + 1);
-
-		String scheme;
+		
 		try {
 			auth = extractToPath(filename, name);
 			if (auth.getUserName() == null) {
-				scheme = UriParser.extractScheme(filename, name);
+				UriParser.extractScheme(filename, name);
 				UriParser.canonicalizePath(name, 0, name.length(), this);
 				UriParser.fixSeparators(name);
-			} else {
-				scheme = auth.getScheme();
 			}
 			fileType = UriParser.normalisePath(name);
 			path = name.toString();
@@ -47,7 +43,7 @@ public class AzureFileNameParser extends HostFileNameParser {
 				path = "/";
 			}
 		} catch (FileSystemException fse) {
-			scheme = UriParser.extractScheme(filename, name);
+			UriParser.extractScheme(filename, name);
 			UriParser.canonicalizePath(name, 0, name.length(), this);
 			UriParser.fixSeparators(name);
 			// final String rootFile = extractRootPrefix(filename, name);
@@ -55,7 +51,8 @@ public class AzureFileNameParser extends HostFileNameParser {
 			path = name.toString();
 
 		}
-		return new AzureFileName(scheme, path, fileType);
+		return new AzureFileName(auth == null ? null : auth.getUserName(), auth == null ? null : auth.getPassword(),
+				path, fileType);
 	}
 
 }
