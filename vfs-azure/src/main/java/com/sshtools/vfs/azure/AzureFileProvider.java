@@ -71,7 +71,7 @@ public class AzureFileProvider extends AbstractOriginatingFileProvider {
 			if (account == null || key == null || account.length() + key.length() == 0) {
 				throw new FileSystemException("Empty credentials");
 			}
-			String storageConnectionString = String.format("DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s",
+			String storageConnectionString = String.format("DefaultEndpointsProtocol=http;AccountName=%s;AccountKey=%s",
 					account, key);
 			CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
 
