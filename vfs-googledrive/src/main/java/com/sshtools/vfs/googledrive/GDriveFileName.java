@@ -2,13 +2,17 @@ package com.sshtools.vfs.googledrive;
 
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileType;
-import org.apache.commons.vfs2.provider.AbstractFileName;
+import org.apache.commons.vfs2.provider.GenericFileName;
 import org.apache.commons.vfs2.provider.UriParser;
 
-public class GDriveFileName extends AbstractFileName {
+public class GDriveFileName extends GenericFileName {
 
-	protected GDriveFileName(String scheme, String path, FileType type) {
-		super(scheme, path, type);
+	protected GDriveFileName(final String path, final FileType type) {
+		this(null, null, path, type);
+	}
+
+	protected GDriveFileName(String userName, String password, final String path, final FileType type) {
+		super("gdrive", "google.com", 443, 443, userName, password, path, type);
 	}
 
 	public String getContainer() {
@@ -24,12 +28,7 @@ public class GDriveFileName extends AbstractFileName {
 
 	@Override
 	public FileName createName(String absPath, FileType type) {
-		return new GDriveFileName(getScheme(), absPath, type);
+		return new GDriveFileName(getUserName(), getPassword(), absPath, type);
 	}
 
-	@Override
-	protected void appendRootUri(StringBuilder buffer, boolean addPassword) {
-		buffer.append(getScheme());
-		buffer.append("://");
-	}
 }
