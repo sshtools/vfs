@@ -7,7 +7,6 @@ import org.apache.commons.vfs2.FileSystem;
 import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.UserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
-import org.apache.commons.vfs2.provider.webdav.WebdavFileSystem;
 import org.apache.http.cookie.Cookie;
 
 public class WebdavFileSystemConfigBuilder extends DefaultFileSystemConfigBuilder {

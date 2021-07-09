@@ -2,13 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Google Drive Commons VFS Provider</name>
-	<description>A Google Drive Commons VFS provider.</description>
+	<name>Google Drive VFS</name>
+	<description>Google Drive Commons VFS provider</description>
 	<artifactId>vfs-googledrive</artifactId>
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.1.0</version>
+		<version>3.2.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<build>

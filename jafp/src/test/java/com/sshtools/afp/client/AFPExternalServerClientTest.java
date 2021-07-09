@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import com.sshtools.afp.common.AFPConstants;
 

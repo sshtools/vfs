@@ -325,6 +325,11 @@ public class AzureFileObject extends AbstractFileObject<AzureFileSystem> {
 	}
 
 	@Override
+	protected void onChange() throws IOException {
+		this.refresh();
+	}
+
+	@Override
 	protected boolean doIsHidden() throws Exception {
 		return getName().getBaseName().equals(markerFileName);
 	}

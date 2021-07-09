@@ -705,8 +705,6 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 			}
 			;
 			return children.toArray(new FileObject[0]);
-		case OBJECT:
-			throw new IOException("Not a folder.");
 		default:
 			String path = getS3Key();
 			// make sure we add a '/' slash at the end to find children
