@@ -33,11 +33,6 @@ public class SftpFileSystem extends AbstractFileSystem {
 				sftp.quit();
 				sftp = null;
 			}
-
-			if (ssh != null) {
-				ssh.disconnect();
-				ssh = null;
-			}
 		} catch (Exception ex) {
 			if(Log.isDebugEnabled()) {
 				Log.debug("Failed to close communication link.", ex);
@@ -46,20 +41,6 @@ public class SftpFileSystem extends AbstractFileSystem {
 	}
 
 	protected synchronized SftpClient getClient() throws IOException {
-		if (this.ssh == null) {
-			SshConnection ssh;
-			try {
-				final GenericFileName rootName = (GenericFileName) getRootName();
-
-				ssh = SftpClientFactory.createConnection(rootName.getHostName(), rootName.getPort(), rootName.getUserName(),
-					rootName.getPassword(), getFileSystemOptions());
-			} catch (final Exception e) {
-				throw new FileSystemException("vfs.provider.sftp/connect.error", getRootName(), e);
-			}
-
-			this.ssh = ssh;
-		}
-
 		try {
 			/*
 			 * We always maintain at least one sftp client all the while the
@@ -79,6 +60,10 @@ public class SftpFileSystem extends AbstractFileSystem {
 		} catch (final Exception e) {
 			throw new FileSystemException("vfs.provider.sftp/connect.error", getRootName(), e);
 		}
+	}
+	
+	protected SshConnection getSsh() {
+		return ssh;
 	}
 
 	protected void putClient(final SftpClient sftp) {

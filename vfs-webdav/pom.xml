@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>com.github.lookfirst</groupId>
 			<artifactId>sardine</artifactId>
-			<version>5.9</version>
+			<version>5.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
