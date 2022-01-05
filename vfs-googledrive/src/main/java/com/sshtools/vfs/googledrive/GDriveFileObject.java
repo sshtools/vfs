@@ -209,6 +209,11 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 	}
 
 	@Override
+	protected void onChange() throws IOException {
+		this.refresh();
+	}
+
+	@Override
 	protected long doGetContentSize() throws Exception {
 		return file == null ? 0 : (file.getSize() == null ? 0 : file.getSize().longValue());
 	}
