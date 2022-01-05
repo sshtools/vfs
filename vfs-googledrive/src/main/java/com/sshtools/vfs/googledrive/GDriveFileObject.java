@@ -211,6 +211,12 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 	@Override
 	protected void onChange() throws IOException {
 		this.refresh();
+		try {
+			// TODO: not sure why this sleep is needed but without it creating a file by writing to it and
+			// then immediately trying to read it fails
+			Thread.sleep(1000);
+		} catch (InterruptedException exception) {
+		}
 	}
 
 	@Override
