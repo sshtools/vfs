@@ -115,6 +115,9 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 			file.setParents(Arrays.asList(parent.file.getId()));
 		file = drive.files().create(file).execute();
 		attached = false;
+		if(!parent.isAttached()) {
+			parent.doAttach();
+		}
 		parent.children.add(file);
 		doAttach();
 	}
@@ -314,15 +317,14 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 
 	@Override
 	protected void doRename(FileObject newfile) throws Exception {
-		GDriveFileObject parent = (GDriveFileObject) newfile.getParent();
-		if (parent.children != null && this.file != null)
-			parent.children.remove(file);
+		FileObject parent = (FileObject) newfile.getParent();
+		parent.refresh();
 		file.setName(newfile.getName().getBaseName());
-		file.setParents(Arrays.asList(parent.file.getId()));
+		if(parent instanceof GDriveFileObject)
+			file.setParents(Arrays.asList(((GDriveFileObject)parent).file.getId()));
 		file = drive.files().update(file.getId(), file).execute();
 		attached = false;
-		GDriveFileObject newParent = (GDriveFileObject) newfile.getParent();
-		newParent.children.add(file);
+		parent.refresh();
 		doAttach();
 	}
 
