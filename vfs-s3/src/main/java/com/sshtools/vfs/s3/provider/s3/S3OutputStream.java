@@ -153,22 +153,25 @@ public class S3OutputStream extends OutputStream {
 					try {
 						results.add(
 								new UploadPartResultCallable(service, currentOutputStream.toByteArray(), currentOutputStream.size(),
-										bucketName, objectName, multiPartUploadResult.getUploadId(), partNumberCounter, true).call()
+										bucketName, objectName, multiPartUploadResult.getUploadId(), partNumberCounter++, true).call()
 												.getPartETag());
 					} catch (Exception e) {
 						throw new AmazonClientException("Failed to finish multipart upload.", e);
 					}
-					log.info("Finishing upload");
-					// List<PartETag> partETags = getMultiPartsUploadResults();
+					if(log.isDebugEnabled()) {
+						log.debug("Finishing upload " + multiPartUploadResult.getUploadId());
+					}
 					service.completeMultipartUpload(new CompleteMultipartUploadRequest(multiPartUploadResult.getBucketName(),
 							multiPartUploadResult.getKey(), multiPartUploadResult.getUploadId(), results));
-					log.info("Finished upload");
+					if(log.isDebugEnabled()) {
+						log.debug("Completed upload " + multiPartUploadResult.getUploadId());
+					}
 					return null;
 				}
 			});
 		} catch (Exception e) {
 			abortMultiPartUpload();
-			throw new IOException("Multi part upload failed ", e.getCause());
+			throw new IOException("Multipart upload failed ", e.getCause());
 		} finally {
 			this.currentOutputStream = null;
 		}
@@ -225,7 +228,9 @@ public class S3OutputStream extends OutputStream {
 		@Override
 		public UploadPartResult call() throws Exception {
 			try {
-				log.info(String.format("Uploading part %s", uploadId));
+				if(log.isDebugEnabled()) {
+					log.debug(String.format("Uploading part %d/%s", partNumber, uploadId));
+				}
 				return this.amazonS3.uploadPart(new UploadPartRequest().withBucketName(this.bucketName).withKey(this.key)
 						.withUploadId(this.uploadId).withInputStream(new ByteArrayInputStream(this.content))
 						.withPartNumber(this.partNumber).withLastPart(this.last).withPartSize(this.contentLength));
@@ -234,7 +239,9 @@ public class S3OutputStream extends OutputStream {
 				// CompletionService which would cause
 				// an exhaustive memory usage
 				this.content = null;
-				log.info(String.format("Finished iploading part %s", uploadId));
+				if(log.isDebugEnabled()) {
+					log.debug(String.format("Finished uploading part %d/%s", partNumber, uploadId));
+				}
 			}
 		}
 	}
