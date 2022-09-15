@@ -20,8 +20,8 @@ import org.apache.commons.vfs2.provider.AbstractFileName;
 import org.apache.commons.vfs2.provider.AbstractFileSystem;
 import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
 
-import com.sshtools.afp.client.AFPAuthenticator;
-import com.sshtools.afp.client.AFPClient;
+import com.sshtools.jafp.client.AFPAuthenticator;
+import com.sshtools.jafp.client.AFPClient;
 
 public class AFPFileSystem extends AbstractFileSystem {
 

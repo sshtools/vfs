@@ -23,15 +23,15 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.provider.AbstractFileObject;
 
-import com.sshtools.afp.client.AFPClient;
-import com.sshtools.afp.client.AFPFile;
-import com.sshtools.afp.client.AFPFileInputStream;
-import com.sshtools.afp.client.AFPFileOutputStream;
-import com.sshtools.afp.client.AFPVolume;
-import com.sshtools.afp.common.AFPDirectoryInfo;
-import com.sshtools.afp.common.AFPFileInfo;
-import com.sshtools.afp.common.Utility;
-import com.sshtools.afp.server.AFPNodeInfo;
+import com.sshtools.jafp.client.AFPClient;
+import com.sshtools.jafp.client.AFPFile;
+import com.sshtools.jafp.client.AFPFileInputStream;
+import com.sshtools.jafp.client.AFPFileOutputStream;
+import com.sshtools.jafp.client.AFPVolume;
+import com.sshtools.jafp.common.AFPDirectoryInfo;
+import com.sshtools.jafp.common.AFPFileInfo;
+import com.sshtools.jafp.common.Utility;
+import com.sshtools.jafp.server.AFPNodeInfo;
 
 public class AFPFileObject extends AbstractFileObject<AFPFileSystem> {
 	final static Log LOG = LogFactory.getLog(AFPFileObject.class);

@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileContent;
 import org.apache.commons.vfs2.FileObject;
@@ -17,7 +18,7 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.VFS;
 
 public class Sync {
-	final static Logger LOG = Logger.getLogger(Sync.class.getName());
+	final static Log LOG = LogFactory.getLog(Sync.class);
 
 	public enum Result {
 		SKIP, UPDATE, ABORT
@@ -45,18 +46,29 @@ public class Sync {
 		@Override
 		public Result check(FileObject incoming, FileObject existing) throws FileSystemException {
 			long m1 = incoming.getContent().getLastModifiedTime();
-			if (!existing.exists())
+			if (!existing.exists()) {
+				LOG.info(String.format("%s doesn't exist, so updating from incoming %s", existing, incoming));
 				return Result.UPDATE;
+			}
 			else {
 				long m2 = existing.getContent().getLastModifiedTime();
-				return m1 > m2 ? Result.UPDATE : Result.SKIP;
+				if(m1 > m2) {
+					LOG.info(String.format("The incoming %s is newer than the existing %s, updating", incoming, existing));
+					return Result.UPDATE;
+				}
+				else {
+					LOG.info(String.format("The existing %s is newer or identical to %s, skipping", existing, incoming));
+					return Result.SKIP;
+				}
 			}
 		}
 
 		@Override
 		public void tag(Result result, FileObject incoming, FileObject existing) throws FileSystemException {
 			FileContent content = incoming == null ? null : incoming.getContent();
-			existing.getContent().setLastModifiedTime(content == null ? System.currentTimeMillis() : content.getLastModifiedTime());
+			long tm = content == null ? System.currentTimeMillis() : content.getLastModifiedTime();
+			LOG.info(String.format("Setting last modified of %s to %s from %s", existing, tm, incoming));
+			existing.getContent().setLastModifiedTime(tm);
 		}
 	}
 
