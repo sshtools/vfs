@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.3.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<build>

@@ -19,6 +19,8 @@ public interface IAclSetter extends FileOperation {
     /**
      * Executes setter operations.
      * Must be called after setAcl.
+     * 
+     * @throws FileSystemException on error
      */
     @Override
     void process() throws FileSystemException;
