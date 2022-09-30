@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.2.0</version>
+		<version>3.3.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<build>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-s3</artifactId>
-			<version>1.11.640</version>
+			<version>1.12.128</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -69,14 +69,14 @@
 		<repository>
 			<id>sonatype</id>
 			<name>Sonatype OSS Snapshots Repository</name>
-			<url>http://oss.sonatype.org/content/groups/public</url>
+			<url>https://oss.sonatype.org/content/groups/public</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>sonatype</id>
 			<name>Sonatype OSS Snapshots Repository</name>
-			<url>http://oss.sonatype.org/content/groups/public</url>
+			<url>https://oss.sonatype.org/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
 </project>

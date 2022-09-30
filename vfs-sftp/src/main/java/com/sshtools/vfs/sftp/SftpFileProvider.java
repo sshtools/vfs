@@ -33,15 +33,26 @@ public class SftpFileProvider extends AbstractOriginatingFileProvider {
 		// Create the file system
 		final GenericFileName rootName = (GenericFileName) name;
 
-		SshConnection ssh;
-		try {
-			ssh = SftpClientFactory.createConnection(rootName.getHostName(), rootName.getPort(), rootName.getUserName(),
-				rootName.getPassword(), fileSystemOptions);
-		} catch (final Exception e) {
-			throw new FileSystemException("vfs.provider.sftp/connect.error", name, e);
-		}
+		SshConnection ssh = SftpFileSystemConfigBuilder.getInstance().getSshConnection(fileSystemOptions);
+		if(ssh == null) {
+			try {
+				ssh = SftpClientFactory.createConnection(rootName.getHostName(), rootName.getPort(), rootName.getUserName(),
+					rootName.getPassword(), fileSystemOptions);
+			} catch (final Exception e) {
+				throw new FileSystemException("vfs.provider.sftp/connect.error", name, e);
+			}
+			return new SftpFileSystem(rootName, ssh, fileSystemOptions) {
 
-		return new SftpFileSystem(rootName, ssh, fileSystemOptions);
+				@Override
+				protected void doCloseCommunicationLink() {
+					super.doCloseCommunicationLink();
+					getSsh().disconnect();
+				}
+				
+			};
+		}
+		else
+			return new SftpFileSystem(rootName, ssh, fileSystemOptions);
 	}
 
 	public void init() throws FileSystemException {

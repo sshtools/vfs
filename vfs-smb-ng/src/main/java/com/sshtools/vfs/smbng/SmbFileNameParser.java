@@ -96,7 +96,7 @@ public class SmbFileNameParser extends URLFileNameParser
 
         for (int i = 0; i < username.length(); i++)
         {
-            if (username.charAt(i) == '\\')
+            if (username.charAt(i) == '$')
             {
                 return username.substring(0, i);
             }

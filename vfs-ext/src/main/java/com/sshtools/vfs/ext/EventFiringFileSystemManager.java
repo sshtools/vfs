@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,8 @@ public class EventFiringFileSystemManager extends DefaultFileSystemManager
 		implements FileObjectEventListener, Closeable {
 
 	private List<FileObjectEventListener> listeners = new ArrayList<FileObjectEventListener>();
+	private Map<String, Object> providerMap = Collections.synchronizedMap(new HashMap<>());
+	private List<String> virtualFileSystemSchemes = Collections.synchronizedList(new ArrayList<>());
 
 	public void addListener(FileObjectEventListener listener) {
 		listeners.add(listener);
@@ -54,6 +58,7 @@ public class EventFiringFileSystemManager extends DefaultFileSystemManager
 
 	@Override
 	public void addProvider(String urlScheme, FileProvider provider) throws FileSystemException {
+		providerMap .put(urlScheme, provider);
 		super.addProvider(urlScheme, wrap(provider));
 	}
 
@@ -457,6 +462,20 @@ public class EventFiringFileSystemManager extends DefaultFileSystemManager
 		}
 
 	}
+	
+	/**
+     * Get the schemes currently available.
+     *
+     * @return The array of scheme names.
+     */
+    @Override
+    public String[] getSchemes() {
+        final List<String> schemes = new ArrayList<>(providerMap.size() + virtualFileSystemSchemes.size());
+        schemes.addAll(providerMap.keySet());
+        schemes.addAll(virtualFileSystemSchemes);
+        return schemes.toArray(new String[]{});
+    }
+
 
 	@Override
 	public void fireDeletedFile(FileObject f) {
@@ -479,4 +498,8 @@ public class EventFiringFileSystemManager extends DefaultFileSystemManager
 		}
 	}
 
+    protected void addVirtualFileSystemScheme(String rootUri) {
+    	super.addVirtualFileSystemScheme(rootUri);
+        virtualFileSystemSchemes .add(rootUri);
+    }
 }

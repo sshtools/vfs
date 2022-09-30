@@ -37,7 +37,8 @@ public class S3FileNameParser extends AbstractFileNameParser {
             throws FileSystemException {
         StringBuilder name = new StringBuilder();
 
-        String scheme = UriParser.extractScheme(filename, name);
+        @SuppressWarnings("deprecation")
+		String scheme = UriParser.extractScheme(filename, name);
         
 
         // Remove ://

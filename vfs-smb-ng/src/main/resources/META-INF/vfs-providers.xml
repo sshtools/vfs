@@ -1,0 +1,6 @@
+<providers>
+	<provider class-name="com.sshtools.vfs.smbng.SmbFileProvider">
+		<scheme name="smb" />
+        <if-available class-name="jcifs.Config"/>
+	</provider>
+</providers>

@@ -2,12 +2,12 @@ package com.sshtools.vfs.googledrive;
 
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileType;
-import org.apache.commons.vfs2.provider.AbstractFileName;
+import org.apache.commons.vfs2.provider.GenericFileName;
 
-public class GDriveFileName extends AbstractFileName {
+public class GDriveFileName extends GenericFileName {
 
 	protected GDriveFileName(String scheme, String path, FileType type) {
-		super(scheme, path, type);
+		super(scheme, null, 0, 0, null, null, path, type);
 	}
 
 	@Override

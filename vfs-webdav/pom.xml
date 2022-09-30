@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.2.0</version>
+		<version>3.3.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<build>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>com.github.lookfirst</groupId>
 			<artifactId>sardine</artifactId>
-			<version>5.9</version>
+			<version>5.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -69,14 +69,14 @@
 		<repository>
 			<id>sonatype</id>
 			<name>Sonatype OSS Snapshots Repository</name>
-			<url>http://oss.sonatype.org/content/groups/public</url>
+			<url>https://oss.sonatype.org/content/groups/public</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>sonatype</id>
 			<name>Sonatype OSS Snapshots Repository</name>
-			<url>http://oss.sonatype.org/content/groups/public</url>
+			<url>https://oss.sonatype.org/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
 </project>

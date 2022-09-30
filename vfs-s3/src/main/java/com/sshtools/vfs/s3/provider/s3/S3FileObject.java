@@ -424,22 +424,23 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 						final ListObjectsRequest loReq = new ListObjectsRequest();
 						loReq.setBucketName(getBucketId());
 						loReq.setDelimiter("/");
-						S3FileName par = (S3FileName) getName().getParent();
-						String p = par.getPath();
-						if (!p.equals("/"))
-							loReq.setPrefix(p);
+						loReq.setMarker(startWithNoSlash(endsWithSlash(getName().getParent().getPath())));
 						loReq.setMaxKeys(1);
-						loReq.setMarker(candidateKey);
+						loReq.setPrefix(startWithNoSlash(endsWithNoSlash(candidateKey)));
+						
 						ObjectListing listing = exec(new S3Op<ObjectListing>() {
 							@Override
 							public ObjectListing exec(AmazonS3 service) {
 								return service.listObjects(loReq);
 							}
 						});
-						if (!listing.getCommonPrefixes().isEmpty()) {
+						
+						if (!listing.getCommonPrefixes().isEmpty()
+								&& listing.getCommonPrefixes().get(0).equals(startWithNoSlash(endsWithSlash(candidateKey)))) {
 							objectType = ObjectType.FOLDER;
-						} else
+						} else {
 							objectType = ObjectType.OBJECT;
+						}
 					} else
 						objectType = ObjectType.OBJECT;
 					objectMetadata = new ObjectMetadata();
@@ -448,6 +449,28 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 		}
 	}
 
+	private String startWithNoSlash(String str) {
+		if(str.startsWith("/")) {
+			return str.substring(1);
+		}
+		return str;
+	}
+	
+	private String endsWithSlash(String str) {
+		if(!str.endsWith("/")) {
+			return str + "/";
+		}
+		return str;
+	}
+	
+	private String endsWithNoSlash(String str) {
+		if(str.endsWith("/")) {
+			return str.substring(0, str.length()-2);
+		}
+		return str;
+	}
+	
+	
 	@Override
 	protected void doCreateFolder() throws Exception {
 		switch (objectType) {
