@@ -23,6 +23,14 @@ public class Sync {
 	public enum Result {
 		SKIP, UPDATE, ABORT
 	}
+	
+	public interface Completor {
+		void complete(FileObject sourceRoot, FileObject destination);
+		
+		default void completeRoot(FileObject sourceRoot, FileObject destinationRoot) {
+			complete(sourceRoot, destinationRoot);
+		}
+	}
 
 	public interface Checker {
 		Result check(FileObject incoming, FileObject existing) throws FileSystemException;
@@ -45,12 +53,13 @@ public class Sync {
 	public static class LastModifiedChecker implements Checker {
 		@Override
 		public Result check(FileObject incoming, FileObject existing) throws FileSystemException {
-			long m1 = incoming.getContent().getLastModifiedTime();
 			if (!existing.exists()) {
 				LOG.info(String.format("%s doesn't exist, so updating from incoming %s", existing, incoming));
 				return Result.UPDATE;
 			}
 			else {
+				long now = System.currentTimeMillis();
+				long m1 = incoming.exists() ? incoming.getContent().getLastModifiedTime() : now - 1;
 				long m2 = existing.getContent().getLastModifiedTime();
 				if(m1 > m2) {
 					LOG.info(String.format("The incoming %s is newer than the existing %s, updating", incoming, existing));
@@ -78,6 +87,7 @@ public class Sync {
 	private boolean preserveAttributes = true;
 	private boolean deleteRemoved = true;
 	private Checker checker = new LastModifiedChecker();
+	private Completor completor;
 
 	public Sync() {
 	}
@@ -85,6 +95,15 @@ public class Sync {
 	public Sync(FileObject destination, FileObject... sources) {
 		sources(sources);
 		destination(destination);
+	}
+
+	public Completor completor() {
+		return completor;
+	}
+
+	public Sync completor(Completor decorator) {
+		this.completor = decorator;
+		return this;
 	}
 
 	public Sync sources(FileObject... sources) {
@@ -159,6 +178,7 @@ public class Sync {
 		}
 		for (FileObject f : sources) {
 			sync(f, destination, 0);
+			completor.completeRoot(f, destination);
 		}
 	}
 
@@ -223,6 +243,9 @@ public class Sync {
 				to.setReadable(from.isReadable(), true);
 				to.setWritable(from.isWriteable(), true);
 				to.setExecutable(from.isExecutable(), true);
+			}
+			if(completor != null) {
+				completor.complete(from, to);
 			}
 			LOG.info(String.format("Copied %s to %s", from, to));
 		}
