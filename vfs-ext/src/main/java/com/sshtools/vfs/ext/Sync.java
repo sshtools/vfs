@@ -58,8 +58,17 @@ public class Sync {
 				return Result.UPDATE;
 			}
 			else {
-				long now = System.currentTimeMillis();
-				long m1 = incoming.exists() ? incoming.getContent().getLastModifiedTime() : now - 1;
+				if(!incoming.exists()) {
+					LOG.warn(String.format("%s doesn't exist at all, so skipping %s", incoming, existing));
+					return Result.SKIP;
+				}
+				long m1 = 0;
+				try {
+					m1 = incoming.exists() ? incoming.getContent().getLastModifiedTime() : 0;
+				}
+				catch(Exception e) {
+					LOG.warn("Exception checking local file. Assuming doesn't exist.", e);
+				}
 				long m2 = existing.getContent().getLastModifiedTime();
 				if(m1 > m2) {
 					LOG.info(String.format("The incoming %s is newer than the existing %s, updating", incoming, existing));
