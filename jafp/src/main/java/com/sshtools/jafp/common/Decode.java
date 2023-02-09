@@ -16,13 +16,13 @@ class Decode extends Utility implements AFPConstants, DSI_Constants {
 	private final static int PSTRING = 4;
 	private final static int AFPSTRING = 5;
 	private final static int TYPEDSTRING = 6;
-	private final static Integer I_BYTE = new Integer(BYTE);
-	private final static Integer I_SHORT = new Integer(SHORT);
-	private final static Integer I_INTEGER = new Integer(INTEGER);
-	private final static Integer I_LONG = new Integer(LONG);
-	private final static Integer I_PSTRING = new Integer(PSTRING);
-	private final static Integer I_AFPSTRING = new Integer(AFPSTRING);
-	private final static Integer I_TYPEDSTRING = new Integer(TYPEDSTRING);
+	private final static Integer I_BYTE = Integer.valueOf(BYTE);
+	private final static Integer I_SHORT = Integer.valueOf(SHORT);
+	private final static Integer I_INTEGER = Integer.valueOf(INTEGER);
+	private final static Integer I_LONG = Integer.valueOf(LONG);
+	private final static Integer I_PSTRING = Integer.valueOf(PSTRING);
+	private final static Integer I_AFPSTRING = Integer.valueOf(AFPSTRING);
+	private final static Integer I_TYPEDSTRING = Integer.valueOf(TYPEDSTRING);
 
 	public static void afpRequest(byte b[], int cmd) throws IOException {
 		switch (cmd) {

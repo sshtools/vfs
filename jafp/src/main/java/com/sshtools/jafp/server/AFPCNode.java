@@ -80,7 +80,7 @@ public abstract class AFPCNode extends Utility implements AFPConstants, Iterable
 	public int countOffspring()
 	{
 		int count = 0;
-		for (Iterator e = getChildren(); e != null && e.hasNext(); count++)
+		for (Iterator<?> e = getChildren(); e != null && e.hasNext(); count++)
 		{
 			e.next();
 		}

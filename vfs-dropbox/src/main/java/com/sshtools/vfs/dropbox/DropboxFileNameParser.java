@@ -2,7 +2,9 @@ package com.sshtools.vfs.dropbox;
 
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
+import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.provider.AbstractFileNameParser;
 import org.apache.commons.vfs2.provider.UriParser;
 import org.apache.commons.vfs2.provider.VfsComponentContext;
@@ -17,7 +19,15 @@ public class DropboxFileNameParser extends AbstractFileNameParser {
 	@Override
 	public FileName parseUri(VfsComponentContext context, FileName base, String filename) throws FileSystemException {
 		StringBuilder name = new StringBuilder();
-		String scheme = UriParser.extractScheme(filename, name);
+		
+		final FileSystemManager fsm;
+        if (context != null) {
+        	fsm = context.getFileSystemManager();
+        } else {
+        	fsm = VFS.getManager();
+        }
+        
+		String scheme = UriParser.extractScheme(fsm.getSchemes(), filename, name);
 		// Remove ://
 		name.delete(0, 2);
 		UriParser.canonicalizePath(name, 0, name.length(), this);

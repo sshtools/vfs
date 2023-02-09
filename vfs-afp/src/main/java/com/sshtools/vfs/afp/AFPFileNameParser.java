@@ -2,16 +2,18 @@ package com.sshtools.vfs.afp;
 
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
+import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.provider.FileNameParser;
+import org.apache.commons.vfs2.provider.GenericURLFileNameParser;
 import org.apache.commons.vfs2.provider.HostFileNameParser;
-import org.apache.commons.vfs2.provider.URLFileNameParser;
 import org.apache.commons.vfs2.provider.UriParser;
 import org.apache.commons.vfs2.provider.VfsComponentContext;
 import org.apache.commons.vfs2.util.Cryptor;
 import org.apache.commons.vfs2.util.CryptorFactory;
 
-public class AFPFileNameParser extends URLFileNameParser {
+public class AFPFileNameParser extends GenericURLFileNameParser {
 	private static final AFPFileNameParser INSTANCE = new AFPFileNameParser();
 
 	public AFPFileNameParser() {
@@ -23,10 +25,16 @@ public class AFPFileNameParser extends URLFileNameParser {
 	}
 
 	@Override
-	protected Authority extractToPath(final String uri, final StringBuilder name) throws FileSystemException {
+	protected Authority extractToPath(final VfsComponentContext context, final String uri, final StringBuilder name) throws FileSystemException {
 		final AFPAuthority auth = new AFPAuthority();
+		final FileSystemManager fsm;
+        if (context != null) {
+        	fsm = context.getFileSystemManager();
+        } else {
+        	fsm = VFS.getManager();
+        }
 		// Extract the scheme
-		auth.setScheme(UriParser.extractScheme(uri, name));
+		auth.setScheme(UriParser.extractScheme(fsm.getSchemes(), uri, name));
 		// Expecting "//"
 		if (name.length() < 2 || name.charAt(0) != '/' || name.charAt(1) != '/') {
 			throw new FileSystemException("vfs.provider/missing-double-slashes.error", uri);
@@ -84,7 +92,7 @@ public class AFPFileNameParser extends URLFileNameParser {
 			throws FileSystemException {
 		final StringBuilder name = new StringBuilder();
 		// Extract the scheme and authority parts
-		final Authority auth = extractToPath(filename, name);
+		final Authority auth = extractToPath(context, filename, name);
 		String username = auth.getUserName();
 		// Decode and adjust separators
 		UriParser.canonicalizePath(name, 0, name.length(), this);

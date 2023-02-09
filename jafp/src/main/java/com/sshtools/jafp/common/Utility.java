@@ -11,8 +11,6 @@ import java.util.Calendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sshtools.jafp.client.AFPSession;
-
 public abstract class Utility
 {
     private static final Logger LOG = LoggerFactory.getLogger(Utility.class);

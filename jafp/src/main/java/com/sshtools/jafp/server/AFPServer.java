@@ -139,14 +139,14 @@ public abstract class AFPServer implements AFPConstants, Runnable {
 
 	public synchronized int addVolume(AFPServerVolume vol) {
 		int id = nextVolID++;
-		volumesByID.put(new Integer(id), vol);
+		volumesByID.put(Integer.valueOf(id), vol);
 		volumesByName.put(vol.getName(), vol);
 		vol.setID(id);
 		return id;
 	}
 
 	public AFPServerVolume getVolume(int vid) {
-		return (AFPServerVolume) volumesByID.get(new Integer(vid));
+		return (AFPServerVolume) volumesByID.get(Integer.valueOf(vid));
 	}
 
 	public AFPServerVolume getVolume(String vname) {
@@ -167,7 +167,7 @@ public abstract class AFPServer implements AFPConstants, Runnable {
 			return;
 		}
 		volumesByName.remove(vol.getName());
-		volumesByID.remove(new Integer(vol.getID()));
+		volumesByID.remove(Integer.valueOf(vol.getID()));
 	}
 
 	public void delVolume(String vname) {
@@ -175,7 +175,7 @@ public abstract class AFPServer implements AFPConstants, Runnable {
 	}
 
 	public void delVolume(int vid) {
-		delVolume((AFPServerVolume) volumesByID.get(new Integer(vid)));
+		delVolume((AFPServerVolume) volumesByID.get(Integer.valueOf(vid)));
 	}
 
 	public synchronized void start() throws IOException {

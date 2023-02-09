@@ -907,7 +907,7 @@ final class AFPServerSession extends Utility implements AFPConstants {
 			return ERR_ACCESS_DENIED;
 		}
 		debug("openfork ref=" + hex(fid));
-		openForks.put(new Integer(fid), fork);
+		openForks.put(Integer.valueOf(fid), fork);
 		ww.writeShort(flags);
 		ww.writeShort(fid);
 		sendFileInfo(ww, node, flags, AFPConstants.MODE_NONE);
@@ -1094,7 +1094,7 @@ final class AFPServerSession extends Utility implements AFPConstants {
 		rr.skip(1);
 		int forkRef = rr.readUnsignedShort();
 		AFPFork fork = getFork(forkRef);
-		openForks.remove(new Integer(forkRef));
+		openForks.remove(Integer.valueOf(forkRef));
 		debug("closefork ref=" + hex(forkRef) + " fork=" + fork);
 		fork.close();
 		return ERR_NO_ERR;
@@ -1323,7 +1323,7 @@ final class AFPServerSession extends Utility implements AFPConstants {
 
 	// ----------------------------------------------------------------------------------------
 	private AFPFork getFork(int forkRef) throws AFPError {
-		AFPFork fork = (AFPFork) openForks.get(new Integer(forkRef));
+		AFPFork fork = (AFPFork) openForks.get(Integer.valueOf(forkRef));
 		if (fork == null) {
 			throw new AFPError(ERR_PARAM_ERR);
 		}

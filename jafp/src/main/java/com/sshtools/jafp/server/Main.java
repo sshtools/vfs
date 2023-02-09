@@ -164,11 +164,11 @@ public class Main extends Utility implements AFPConstants, DSI_Constants
 			if (root.isDirectory()) {
 				OS_Volume nvol = new OS_Volume(name, root, pass);
 				nvol.setReadOnly(ro != null && ro.equalsIgnoreCase("true"));
-				ports.append(new Integer(port), nvol);
+				ports.append(Integer.valueOf(port), nvol);
 			}
 			else if (root.getName().toLowerCase().endsWith(".zip") || root.getName().toLowerCase().endsWith(".jar")) 
 			{
-				ports.append(new Integer(port), new ZIP_Volume(name, new ZipFile(root), pass));
+				ports.append(Integer.valueOf(port), new ZIP_Volume(name, new ZipFile(root), pass));
 			}
 			else
 			{

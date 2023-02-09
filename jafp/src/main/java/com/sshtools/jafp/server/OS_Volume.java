@@ -50,7 +50,7 @@ class OS_Volume extends AFPServerVolume
 	// global node (database) handling
 	private OSNode addNode(OSNode node)
 	{
-		allNodes.put(new Integer(node.getNodeID()), node);
+		allNodes.put(Integer.valueOf(node.getNodeID()), node);
 		addFileMap(node.file(), node);
 		return node;
 	}
@@ -72,7 +72,7 @@ class OS_Volume extends AFPServerVolume
 
 	private OSNode getNode(int id)
 	{
-		return (OSNode)allNodes.get(new Integer(id));
+		return (OSNode)allNodes.get(Integer.valueOf(id));
 	}
 
 	private OSNode getNode(File file)
@@ -85,7 +85,7 @@ class OS_Volume extends AFPServerVolume
 		OSNode node = getNode(id);
 		if (node != null)
 		{
-			allNodes.remove(new Integer(id));
+			allNodes.remove(Integer.valueOf(id));
 			delFileMap(node.file());
 		}
 	}
@@ -96,7 +96,7 @@ class OS_Volume extends AFPServerVolume
 		if (node != null)
 		{
 			delFileMap(file);
-			allNodes.remove(new Integer(node.getNodeID()));
+			allNodes.remove(Integer.valueOf(node.getNodeID()));
 		}
 	}
 
