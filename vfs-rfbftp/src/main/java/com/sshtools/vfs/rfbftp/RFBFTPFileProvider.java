@@ -13,8 +13,6 @@ import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.provider.AbstractOriginatingFileProvider;
 import org.apache.commons.vfs2.provider.GenericFileName;
 
-import com.sshtools.rfb.swing.SwingRFBToolkit;
-
 public class RFBFTPFileProvider extends AbstractOriginatingFileProvider {
 	protected final static Collection<Capability> capabilities = Collections
 			.unmodifiableCollection(Arrays.asList(new Capability[] { Capability.CREATE, Capability.DELETE, Capability.RENAME,
@@ -26,9 +24,6 @@ public class RFBFTPFileProvider extends AbstractOriginatingFileProvider {
 	public RFBFTPFileProvider() {
 		super();
 		setFileNameParser(RFBFTPFileNameParser.getInstance());
-		
-		// TODO ideally the toolkit should be configurable per connection as this may be used in a shared environment
-		new SwingRFBToolkit();
 		
 	}
 

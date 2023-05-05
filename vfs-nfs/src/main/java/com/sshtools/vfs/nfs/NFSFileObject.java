@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.provider.AbstractFileName;
 import org.apache.commons.vfs2.provider.AbstractFileObject;
@@ -20,6 +21,7 @@ import com.emc.ecs.nfsclient.nfs.io.Nfs3File;
 import com.emc.ecs.nfsclient.nfs.io.NfsFileInputStream;
 import com.emc.ecs.nfsclient.nfs.io.NfsFileOutputStream;
 import com.emc.ecs.nfsclient.nfs.nfs3.Nfs3;
+
 
 public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 	final static Log LOG = LogFactory.getLog(NFSFileObject.class);
@@ -44,7 +46,8 @@ public class NFSFileObject extends AbstractFileObject<NFSFileSystem> {
 
 	@Override
 	protected void doCreateFolder() throws URISyntaxException, IOException {
-		getNfsFile().mkdir();
+		FileSystemOptions opts = getFileSystem().getFileSystemOptions();
+		getNfsFile().mkdir(NFSFileSystemConfigBuilder.getInstance().getNewFolderPermissions(opts));
 	}
 
 	@Override

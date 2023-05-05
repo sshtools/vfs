@@ -306,6 +306,8 @@ public class S3FileObject extends AbstractFileObject<S3FileSystem> {
 	 * @see IAclGetter
 	 */
 	public void setAcl(Acl acl) throws FileSystemException {
+		doAttach();
+		
 		// Create empty S3 ACL list
 		AccessControlList s3Acl = new AccessControlList();
 		// Get file owner

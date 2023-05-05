@@ -2,7 +2,9 @@ package com.sshtools.vfs.googledrive;
 
 import org.apache.commons.vfs2.FileName;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
+import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.provider.HostFileNameParser;
 import org.apache.commons.vfs2.provider.UriParser;
 import org.apache.commons.vfs2.provider.VfsComponentContext;
@@ -32,10 +34,16 @@ public class GDriveFileNameParser extends HostFileNameParser {
 			filename = filename.substring(0,  eidx + 1) + "google.com" + filename.substring(eidx + 1);
 
 		String scheme;
+		final FileSystemManager fsm;
+        if (context != null) {
+        	fsm = context.getFileSystemManager();
+        } else {
+        	fsm = VFS.getManager();
+        }
 		try {
-			auth = extractToPath(filename, name);
+			auth = extractToPath(context, filename, name);
 			if (auth.getUserName() == null) {
-				scheme = UriParser.extractScheme(filename, name);
+				scheme = UriParser.extractScheme(fsm.getSchemes(), filename, name);
 				UriParser.canonicalizePath(name, 0, name.length(), this);
 				UriParser.fixSeparators(name);
 			} else {
@@ -47,7 +55,7 @@ public class GDriveFileNameParser extends HostFileNameParser {
 				path = "/";
 			}
 		} catch (FileSystemException fse) {
-			scheme = UriParser.extractScheme(filename, name);
+			scheme = UriParser.extractScheme(fsm.getSchemes(), filename, name);
 			UriParser.canonicalizePath(name, 0, name.length(), this);
 			UriParser.fixSeparators(name);
 			// final String rootFile = extractRootPrefix(filename, name);

@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.sshtools</groupId>
 		<artifactId>vfs</artifactId>
-		<version>3.3.0</version>
+		<version>4.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<distributionManagement>
@@ -40,9 +40,9 @@
 		</testResources>
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-site-plugin</artifactId>
-			    <version>3.8.2</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.8.2</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -65,9 +65,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.sshtools</groupId>
-			<artifactId>nfs-client-java</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>com.emc.ecs</groupId>
+			<artifactId>nfs-client</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 	</dependencies>
 	<repositories>

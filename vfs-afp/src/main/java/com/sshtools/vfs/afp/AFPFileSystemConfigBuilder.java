@@ -7,7 +7,7 @@ import org.apache.commons.vfs2.FileSystem;
 import org.apache.commons.vfs2.FileSystemConfigBuilder;
 import org.apache.commons.vfs2.FileSystemOptions;
 
-import com.sshtools.afp.common.AFPConstants;
+import com.sshtools.jafp.common.AFPConstants;
 
 public class AFPFileSystemConfigBuilder extends FileSystemConfigBuilder {
 	private static final String VOLUME = "volume";

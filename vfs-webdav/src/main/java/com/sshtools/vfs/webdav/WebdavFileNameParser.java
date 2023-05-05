@@ -33,7 +33,7 @@ public class WebdavFileNameParser extends HttpFileNameParser {
 		final StringBuilder name = new StringBuilder();
 
 		// Extract the scheme and authority parts
-		final Authority auth = extractToPath(filename, name);
+		final Authority auth = extractToPath(context, filename, name);
 
 		// Extract the queryString
 		String queryString = UriParser.extractQueryString(name);

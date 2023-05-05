@@ -28,7 +28,7 @@ public class NFSFileNameParser extends HostFileNameParser {
 		name.setLength(0);
 
 		// Extract the scheme and authority parts
-		final Authority auth = extractToPath(filename, name);
+		final Authority auth = extractToPath(context, filename, name);
 
 		// Decode and normalise the file name
 		UriParser.canonicalizePath(name, 0, name.length(), this);

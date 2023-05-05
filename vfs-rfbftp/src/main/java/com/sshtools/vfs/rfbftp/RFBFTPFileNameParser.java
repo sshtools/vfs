@@ -1,10 +1,10 @@
 package com.sshtools.vfs.rfbftp;
 
 import org.apache.commons.vfs2.provider.FileNameParser;
-import org.apache.commons.vfs2.provider.URLFileNameParser;
+import org.apache.commons.vfs2.provider.GenericURLFileNameParser;
 
 
-public class RFBFTPFileNameParser extends URLFileNameParser
+public class RFBFTPFileNameParser extends GenericURLFileNameParser
 {
     private final static RFBFTPFileNameParser instance = new RFBFTPFileNameParser();
 

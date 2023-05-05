@@ -39,7 +39,6 @@ import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
 import jcifs.CIFSContext;
 import jcifs.CIFSException;
 import jcifs.CloseableIterator;
-import jcifs.Credentials;
 import jcifs.SmbRandomAccess;
 import jcifs.SmbResource;
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -100,7 +99,6 @@ public class SmbFileObject
             
             CIFSContext ctx = SmbFileSystemConfigBuilder.getInstance().getContext(getFileSystem().getFileSystemOptions());
 
-            	Credentials c;
             	ctx = ctx.withCredentials(new NtlmPasswordAuthentication(ctx, 
                     UserAuthenticatorUtils.toString(
                         UserAuthenticatorUtils.getData(authData, UserAuthenticationData.DOMAIN,

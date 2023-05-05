@@ -137,7 +137,7 @@ public class WebdavFileSystemConfigBuilder extends DefaultFileSystemConfigBuilde
      */
     public void setProxyPort(FileSystemOptions opts, int proxyPort)
     {
-        setParam(opts, "proxyPort", new Integer(proxyPort));
+        setParam(opts, "proxyPort", Integer.valueOf(proxyPort));
     }
 
     /**
@@ -214,7 +214,7 @@ public class WebdavFileSystemConfigBuilder extends DefaultFileSystemConfigBuilde
      */
     public void setMaxTotalConnections(FileSystemOptions opts, int maxTotalConnections)
     {
-        setParam(opts, MAX_TOTAL_CONNECTIONS, new Integer(maxTotalConnections));
+        setParam(opts, MAX_TOTAL_CONNECTIONS, Integer.valueOf(maxTotalConnections));
     }
 
     /**
@@ -236,7 +236,7 @@ public class WebdavFileSystemConfigBuilder extends DefaultFileSystemConfigBuilde
      */
     public void setMaxConnectionsPerHost(FileSystemOptions opts, int maxHostConnections)
     {
-        setParam(opts, MAX_HOST_CONNECTIONS, new Integer(maxHostConnections));
+        setParam(opts, MAX_HOST_CONNECTIONS, Integer.valueOf(maxHostConnections));
     }
 
     /**

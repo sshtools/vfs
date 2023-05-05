@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileContent;
 import org.apache.commons.vfs2.FileObject;
@@ -17,10 +18,18 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.VFS;
 
 public class Sync {
-	final static Logger LOG = Logger.getLogger(Sync.class.getName());
+	final static Log LOG = LogFactory.getLog(Sync.class);
 
 	public enum Result {
 		SKIP, UPDATE, ABORT
+	}
+	
+	public interface Completor {
+		void complete(FileObject sourceRoot, FileObject destination);
+		
+		default void completeRoot(FileObject sourceRoot, FileObject destinationRoot) {
+			complete(sourceRoot, destinationRoot);
+		}
 	}
 
 	public interface Checker {
@@ -44,19 +53,40 @@ public class Sync {
 	public static class LastModifiedChecker implements Checker {
 		@Override
 		public Result check(FileObject incoming, FileObject existing) throws FileSystemException {
-			long m1 = incoming.getContent().getLastModifiedTime();
-			if (!existing.exists())
+			if (!existing.exists()) {
+				LOG.info(String.format("%s doesn't exist, so updating from incoming %s", existing, incoming));
 				return Result.UPDATE;
+			}
 			else {
+				if(!incoming.exists()) {
+					LOG.warn(String.format("%s doesn't exist at all, so skipping %s", incoming, existing));
+					return Result.SKIP;
+				}
+				long m1 = 0;
+				try {
+					m1 = incoming.exists() ? incoming.getContent().getLastModifiedTime() : 0;
+				}
+				catch(Exception e) {
+					LOG.warn("Exception checking local file. Assuming doesn't exist.", e);
+				}
 				long m2 = existing.getContent().getLastModifiedTime();
-				return m1 > m2 ? Result.UPDATE : Result.SKIP;
+				if(m1 > m2) {
+					LOG.info(String.format("The incoming %s is newer than the existing %s, updating", incoming, existing));
+					return Result.UPDATE;
+				}
+				else {
+					LOG.info(String.format("The existing %s is newer or identical to %s, skipping", existing, incoming));
+					return Result.SKIP;
+				}
 			}
 		}
 
 		@Override
 		public void tag(Result result, FileObject incoming, FileObject existing) throws FileSystemException {
 			FileContent content = incoming == null ? null : incoming.getContent();
-			existing.getContent().setLastModifiedTime(content == null ? System.currentTimeMillis() : content.getLastModifiedTime());
+			long tm = content == null ? System.currentTimeMillis() : content.getLastModifiedTime();
+			LOG.info(String.format("Setting last modified of %s to %s from %s", existing, tm, incoming));
+			existing.getContent().setLastModifiedTime(tm);
 		}
 	}
 
@@ -66,6 +96,7 @@ public class Sync {
 	private boolean preserveAttributes = true;
 	private boolean deleteRemoved = true;
 	private Checker checker = new LastModifiedChecker();
+	private Completor completor;
 
 	public Sync() {
 	}
@@ -73,6 +104,15 @@ public class Sync {
 	public Sync(FileObject destination, FileObject... sources) {
 		sources(sources);
 		destination(destination);
+	}
+
+	public Completor completor() {
+		return completor;
+	}
+
+	public Sync completor(Completor decorator) {
+		this.completor = decorator;
+		return this;
 	}
 
 	public Sync sources(FileObject... sources) {
@@ -147,6 +187,7 @@ public class Sync {
 		}
 		for (FileObject f : sources) {
 			sync(f, destination, 0);
+			completor.completeRoot(f, destination);
 		}
 	}
 
@@ -211,6 +252,9 @@ public class Sync {
 				to.setReadable(from.isReadable(), true);
 				to.setWritable(from.isWriteable(), true);
 				to.setExecutable(from.isExecutable(), true);
+			}
+			if(completor != null) {
+				completor.complete(from, to);
 			}
 			LOG.info(String.format("Copied %s to %s", from, to));
 		}

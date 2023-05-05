@@ -7,7 +7,7 @@ import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 
-import com.sshtools.afp.common.AFPConstants;
+import com.sshtools.jafp.common.AFPConstants;
 
 public class Test {
 	public static void main(String[] args) throws FileSystemException {

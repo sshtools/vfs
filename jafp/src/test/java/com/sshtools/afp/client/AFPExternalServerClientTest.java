@@ -5,7 +5,9 @@ import java.util.Properties;
 
 import org.junit.Before;
 
-import com.sshtools.afp.common.AFPConstants;
+import com.sshtools.jafp.client.AFPClient;
+import com.sshtools.jafp.client.AFPVolume;
+import com.sshtools.jafp.common.AFPConstants;
 
 public class AFPExternalServerClientTest extends AbstractEmbeddedServerTest {
 	Properties properties = new Properties();
