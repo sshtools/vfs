@@ -86,7 +86,7 @@ class DropboxClientWrapper implements DropboxClient {
 				throw new Exception("vfs.provider.sftp/authentication-cancelled.error");
 			}
 			
-			String[] app = new String(data.getData(UserAuthenticationData.DOMAIN)).split("|");			
+			String[] app = new String(data.getData(UserAuthenticationData.DOMAIN)).split("\\|");			
 
 			String refreshToken = new String(data.getData(UserAuthenticationData.USERNAME));
 
