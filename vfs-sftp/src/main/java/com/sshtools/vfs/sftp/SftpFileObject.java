@@ -196,7 +196,7 @@ public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
 		attributes.put("gid", attrs.getGID());
 		attributes.put("maskString", attrs.getMaskString());
 		attributes.put("permissions",
-				Integer.valueOf(attrs.getPermissions().intValue()));
+				Integer.valueOf(attrs.getPosixPermissions().asInt()));
 		attributes.put("permissionsString", attrs.getPermissionsString());
 		attributes.put("uid", attrs.getUID());
 		attributes.put("block", Boolean.valueOf(attrs.isBlock()));

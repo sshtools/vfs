@@ -9,6 +9,7 @@ import org.apache.commons.vfs2.FileSystemOptions;
 import org.apache.commons.vfs2.UserAuthenticationData;
 import org.apache.commons.vfs2.UserAuthenticator;
 
+import com.sshtools.client.KeyPairAuthenticator;
 import com.sshtools.client.PublicKeyAuthenticator;
 import com.sshtools.client.SshClient;
 import com.sshtools.common.publickey.SshPrivateKeyFileFactory;
@@ -82,7 +83,7 @@ public class SftpClientFactory {
 				if(Objects.isNull(ssh)) {
 					client = new SshClient(hostname, port, username, pair);
 				} else {
-					client.authenticate(new PublicKeyAuthenticator(pair), 30000);
+					client.authenticate(new KeyPairAuthenticator(pair), 30000);
 				}
 			}
 
