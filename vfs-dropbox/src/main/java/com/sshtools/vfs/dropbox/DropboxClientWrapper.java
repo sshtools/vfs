@@ -34,7 +34,6 @@ import org.apache.commons.vfs2.util.UserAuthenticatorUtils;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.oauth.DbxCredential;
-import com.dropbox.core.util.StringUtil;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -79,7 +78,7 @@ class DropboxClientWrapper implements DropboxClient {
 			if (data == null) {
 				throw new Exception("vfs.provider.sftp/authentication-cancelled.error");
 			}
-			
+
 			DbxRequestConfig config = DbxRequestConfig.newBuilder("DropboxVfs/4.0").withUserLocaleFrom(Locale.getDefault()).build();
 			
 			String accessToken = new String(data.getData(UserAuthenticationData.PASSWORD));
@@ -87,11 +86,12 @@ class DropboxClientWrapper implements DropboxClient {
 				throw new Exception("vfs.provider.sftp/authentication-cancelled.error");
 			}
 			
-			String appKey = new String(data.getData(UserAuthenticationData.DOMAIN));			
+			String[] app = new String(data.getData(UserAuthenticationData.DOMAIN)).split("\\|");			
+
 			String refreshToken = new String(data.getData(UserAuthenticationData.USERNAME));
 
-			if(appKey!=null && !"".equals(appKey) && refreshToken!=null && !"".equals(refreshToken)) {
-				return new DbxClientV2(config, new DbxCredential(accessToken, -1L, refreshToken, appKey));
+			if(app!=null && app.length==2 && refreshToken!=null && !"".equals(refreshToken)) {
+				return new DbxClientV2(config, new DbxCredential(accessToken, -1L, refreshToken, app[0], app[1]));
 			} else {
 				return new DbxClientV2(config, accessToken);
 			}
