@@ -6,6 +6,8 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<commonsVFSVersion>2.9.0</commonsVFSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<build.projectProperties>${basedir}/jadaptive.build.properties</build.projectProperties>
+		<build.userProperties>${user.home}/.jadaptive.build.properties</build.userProperties>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -81,58 +83,40 @@
 	</dependencies>
 	
 
-	<profiles>
-        <profile>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <configuration>
-                                <!-- TODO: Why is this STILL broken! -->
-                                <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<quiet>true</quiet>
+							<files>
+								<file>${build.projectProperties}</file>
+								<file>${build.userProperties}</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+            </plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>properties-maven-plugin</artifactId>
+    				<version>1.2.1</version>
+				</plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -154,7 +138,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.2</version>
+    				<version>3.6.3</version>
 					<executions>
 						<execution>
 							<id>javadoc-jar</id>
@@ -162,22 +146,25 @@
 							<goals>
 								<goal>jar</goal>
 							</goals>
-							<configuration>
-								<!-- switch on dependency-driven aggregation -->
-								<includeDependencySources>false</includeDependencySources>
-								<dependencySourceIncludes>
-									<!-- include ONLY dependencies I control -->
-									<dependencySourceInclude>com.sshtools:*</dependencySourceInclude>
-								</dependencySourceIncludes>
-								<additionalparam>-Xdoclint:none</additionalparam>
-							</configuration>
 						</execution>
 					</executions>
+					<configuration>
+       					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+						<encoding>UTF-8</encoding>
+						<detectJavaApiLink>false</detectJavaApiLink>
+						<source>11</source>
+						<doclint>none</doclint>
+						<sourcepath>src/main/java</sourcepath>
+						<includeDependencySources>false</includeDependencySources>
+						<dependencySourceIncludes>
+							<dependencySourceInclude>com.sshtools:*</dependencySourceInclude>
+						</dependencySourceIncludes>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.1.0</version>
 					<executions>
 						<execution>
 							<id>sign-artifacts</id>
@@ -217,7 +204,7 @@
 				<plugin>
 					<groupId>org.sonatype.plugins</groupId>
 					<artifactId>nexus-staging-maven-plugin</artifactId>
-					<version>1.6.12</version>
+					<version>1.6.13</version>
 					<extensions>true</extensions>
 					<configuration>
 						<serverId>ossrh-sshtools</serverId>
@@ -227,11 +214,37 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-            </plugin>
-		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
