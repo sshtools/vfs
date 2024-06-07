@@ -74,7 +74,11 @@ class DropboxClientWrapper implements DropboxClient {
 		try {
 			UserAuthenticator ua = DefaultFileSystemConfigBuilder.getInstance().getUserAuthenticator(fileSystemOptions);
 			UserAuthenticationData data = ua
-					.requestAuthentication(new UserAuthenticationData.Type[] { UserAuthenticationData.PASSWORD });
+					.requestAuthentication(new UserAuthenticationData.Type[] {
+						UserAuthenticationData.USERNAME,
+						UserAuthenticationData.PASSWORD,
+						UserAuthenticationData.DOMAIN
+					});
 			if (data == null) {
 				throw new Exception("vfs.provider.sftp/authentication-cancelled.error");
 			}
