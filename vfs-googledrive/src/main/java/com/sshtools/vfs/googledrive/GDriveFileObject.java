@@ -80,12 +80,13 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 				}
 			}
 			com.google.api.services.drive.Drive.Files.List request = null;
+			// TODO: figure out which fields are needed and add only those instead of using `*` below
 			if (path.equals("/")) {
 				/* Root */
-				request = drive.files().list().setQ("'root' in parents");
+				request = drive.files().list().setFields("*").setQ("'root' in parents");
 			} else if (file != null && "application/vnd.google-apps.folder".equals(file.getMimeType())) {
 				/* If this is known to be a directory, list the files in it */
-				request = drive.files().list().setQ(String.format("'%s' in parents", file.getId()));
+				request = drive.files().list().setFields("*").setQ(String.format("'%s' in parents", file.getId()));
 			}
 			if (request != null) {
 				children = new ArrayList<File>();
@@ -208,6 +209,17 @@ public class GDriveFileObject extends AbstractFileObject<GDriveFileSystem> {
 
 	private long processTime(DateTime dateTime) {
 		return dateTime == null ? 0 : dateTime.getValue();
+	}
+
+	@Override
+	protected void onChange() throws IOException {
+		this.refresh();
+		try {
+			// TODO: not sure why this sleep is needed but without it creating a file by writing to it and
+			// then immediately trying to read it fails
+			Thread.sleep(1000);
+		} catch (InterruptedException exception) {
+		}
 	}
 
 	@Override
