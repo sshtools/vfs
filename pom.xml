@@ -196,7 +196,7 @@
                     <version>0.8.0</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <publishingServerId>central-jadaptive</publishingServerId>
+                        <publishingServerId>central-sshtools</publishingServerId>
                          <autoPublish>true</autoPublish>
                          <waitUntil>published</waitUntil>
                     </configuration>
