@@ -53,7 +53,9 @@ public class SftpFileSystem extends AbstractFileSystem {
 				sftp = this.sftp;
 				this.sftp = null;
 			} else {
-				sftp = new SftpClient(ssh);
+				sftp = SftpClient.SftpClientBuilder.create().
+						withConnection(ssh).
+						build();
 				home = sftp.pwd();
 			}
 			return sftp;

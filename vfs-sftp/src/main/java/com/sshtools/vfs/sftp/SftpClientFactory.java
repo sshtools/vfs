@@ -11,6 +11,7 @@ import org.apache.commons.vfs2.UserAuthenticator;
 
 import com.sshtools.client.KeyPairAuthenticator;
 import com.sshtools.client.SshClient;
+import com.sshtools.client.SshClient.SshClientBuilder;
 import com.sshtools.common.publickey.SshPrivateKeyFileFactory;
 import com.sshtools.common.ssh.SshConnection;
 import com.sshtools.common.ssh.components.SshKeyPair;
@@ -57,7 +58,12 @@ public class SftpClientFactory {
 					password = new String(data
 							.getData(UserAuthenticationData.PASSWORD));
 					
-					client = new SshClient(hostname, port, username, password.toCharArray());
+					client = SshClientBuilder.create().
+							withHostname(hostname).
+							withPort(port).
+							withUsername(username).
+							withPassword(password).
+							build();
 				}
 			}	
 			
@@ -79,11 +85,7 @@ public class SftpClientFactory {
 					}
 				}
 				
-				if(Objects.isNull(ssh)) {
-					client = new SshClient(hostname, port, username, pair);
-				} else {
-					client.authenticate(new KeyPairAuthenticator(pair), 30000);
-				}
+				client.authenticate(new KeyPairAuthenticator(pair), 30000);
 			}
 
 			if (!client.isAuthenticated()) {

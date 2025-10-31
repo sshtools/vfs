@@ -5,6 +5,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,11 +21,13 @@ import org.apache.commons.vfs2.util.RandomAccessMode;
 
 import com.sshtools.client.sftp.SftpClient;
 import com.sshtools.client.sftp.SftpFile;
+import com.sshtools.common.sftp.PosixPermissions;
+import com.sshtools.common.sftp.PosixPermissions.PosixPermissionsBuilder;
 import com.sshtools.common.sftp.SftpFileAttributes;
+import com.sshtools.common.sftp.SftpFileAttributes.SftpFileAttributesBuilder;
 import com.sshtools.common.sftp.SftpStatusException;
 import com.sshtools.common.ssh.SshException;
 import com.sshtools.common.ssh.SshIOException;
-import com.sshtools.common.util.UnsignedInteger32;
 import com.sshtools.common.util.UnsignedInteger64;
 
 public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
@@ -52,19 +55,28 @@ public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
 		final SftpClient sftp = fs.getClient();
 		try {
 			if (attrName.equals(ATTR_UID)) {
-				attrs.setUID(String.valueOf(value));
+				sftp.setAttributes(getName().getPathDecoded(), SftpFileAttributesBuilder.create().
+						withFileAttributes(attrs).
+						withUidOrUsername(String.valueOf(value)).
+						build());
 			} else if (attrName.equals(ATTR_GID)) {
-				attrs.setGID(String.valueOf(value));
+				sftp.setAttributes(getName().getPathDecoded(), SftpFileAttributesBuilder.create().
+						withFileAttributes(attrs).
+						withGidOrGroup(String.valueOf(value)).
+						build());
 			} else if (attrName.equals(ATTR_PERMISSIONS)) {
 				int intValue = ((Integer) value).intValue();
 				if (intValue != -1) {
-					attrs.setPermissions(new UnsignedInteger32(intValue));
+					sftp.setAttributes(getName().getPathDecoded(), SftpFileAttributesBuilder.create().
+						withFileAttributes(attrs).
+						withPermissions(PosixPermissionsBuilder.create().
+							fromBitmask(intValue).
+							build()).
+						build());
 				}
 			} else {
 				super.doSetAttribute(attrName, value);
 			}
-			sftp.getSubsystemChannel().setAttributes(
-					getName().getPathDecoded(), attrs);
 		} finally {
 			fs.putClient(sftp);
 		}
@@ -110,8 +122,7 @@ public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
 					"vfs.provider.sftp/get-last-modified-time.error");
 		}
 
-		long lastModifiedSeconds = attrs.getModifiedTime().longValue();
-		return lastModifiedSeconds * 1000L;
+		return attrs.lastModifiedTimeOr().map(FileTime::toMillis).orElse(0l);
 	}
 
 	protected boolean doSetLastModifiedTime(final long modtime)
@@ -122,9 +133,12 @@ public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
 		}
 		final SftpClient sftp = fs.getClient();
 		try {
-			attrs.setTimes(null, new UnsignedInteger64(modtime / 1000L));
-			sftp.getSubsystemChannel().setAttributes(
-					getName().getPathDecoded(), attrs);
+
+			sftp.setAttributes(getName().getPathDecoded(), SftpFileAttributesBuilder.create().
+					withFileAttributes(attrs).
+					withLastModifiedTime(modtime).
+					build());
+			
 			return true;
 		} finally {
 			fs.putClient(sftp);
@@ -190,15 +204,15 @@ public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
 		}
 		final Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("accessedTime",
-				Long.valueOf(attrs.getAccessedTime().longValue()));
+				attrs.lastAccessTimeOr().map(FileTime::toMillis).orElse(0l));
 		attributes.put("creationTime",
-				Long.valueOf(attrs.getCreationTime().longValue()));
-		attributes.put("gid", attrs.getGID());
-		attributes.put("maskString", attrs.getMaskString());
+				attrs.createTimeOr().map(FileTime::toMillis).orElse(0l));
+		attributes.put("gid", attrs.gidOr().orElse(0));
+		attributes.put("maskString", attrs.toMaskString());
 		attributes.put("permissions",
-				Integer.valueOf(attrs.getPosixPermissions().asInt()));
-		attributes.put("permissionsString", attrs.getPermissionsString());
-		attributes.put("uid", attrs.getUID());
+				Integer.valueOf(attrs.permissionsOr().map(PosixPermissions::asInt).orElse(0)));
+		attributes.put("permissionsString", attrs.permissionsOr().map(PosixPermissions::asFileModesString));
+		attributes.put("uid", attrs.uidOr().orElse(0));
 		attributes.put("block", Boolean.valueOf(attrs.isBlock()));
 		attributes.put("character", Boolean.valueOf(attrs.isCharacter()));
 		attributes.put("fifo", Boolean.valueOf(attrs.isFifo()));
@@ -212,7 +226,7 @@ public class SftpFileObject extends AbstractFileObject<SftpFileSystem> {
 			throw new FileSystemException(
 					"vfs.provider.sftp/get-content-size.error");
 		}
-		return attrs.getSize().longValue();
+		return attrs.sizeOr().map(UnsignedInteger64::longValue).orElse(0l);
 	}
 
 	protected RandomAccessContent doGetRandomAccessContent(
