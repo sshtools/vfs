@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class AFPSession extends AbstractAFPConnection {
 		super(socket);
 		LOG.info(String.format("Will attempt to use %s.", auth));
 		// TODO why and when?
-		var useLoginExt = true;
+		boolean useLoginExt = true;
 		// Is clear text supported, do we have authenticator?
 		try {
 			if (serverModules.contains(AFPConstants.UAM_STR_DHX_128) && auth.equals(AFPConstants.UAM_STR_DHX_128)
@@ -79,7 +80,7 @@ public class AFPSession extends AbstractAFPConnection {
 	List<AFPNodeInfo> enumerate(int volId, int dirId, int fileFlags, int dirFlags, int mode, String path) throws IOException {
 		List<AFPNodeInfo> names = new ArrayList<>();
 		// TODO must sort out buffer sizes... this should not be required!
-		var ww = new ByteWriter(1024);
+		ByteWriter ww = new ByteWriter(1024);
 		ww.writeByte(AFPConstants.CMD_ENUMERATE);
 		ww.writeByte(0);
 		ww.writeShort(volId);
@@ -91,7 +92,7 @@ public class AFPSession extends AbstractAFPConnection {
 		ww.writeShort(Short.MAX_VALUE); // TODO paging?
 		ww.write(0);
 		ww.writePString(path);
-		var r = sendRecv(new DSI_Packet(DSI_Constants.DSI_REQUEST, DSI_Constants.CMD_COMMAND, nextId(), ww.toByteArray()))
+		ByteReader r = sendRecv(new DSI_Packet(DSI_Constants.DSI_REQUEST, DSI_Constants.CMD_COMMAND, nextId(), ww.toByteArray()))
 				.getReader();
 		fileFlags = r.readUnsignedShort();
 		dirFlags = r.readUnsignedShort();
@@ -107,7 +108,7 @@ public class AFPSession extends AbstractAFPConnection {
 				rz = new byte[len - 1];
 				r.readBytes(rz);
 			}
-			var brz = new ByteReader(rz);
+			ByteReader brz = new ByteReader(rz);
 			int type = mode == AFPConstants.MODE_OLD ? brz.readUnsignedByte() : brz.readUnsignedShort();
 			if (type == 0) {
 				names.add(new AFPFileInfo(fileFlags, brz));
@@ -119,7 +120,7 @@ public class AFPSession extends AbstractAFPConnection {
 	}
 
 	AFPVolumeInfo getVolume(int id, int flags) throws IOException {
-		var ww = new ByteWriter(32);
+		ByteWriter ww = new ByteWriter(32);
 		ww.write(AFPConstants.CMD_GET_VOL_PARMS);
 		ww.write(0);
 		ww.writeShort(id);
@@ -131,7 +132,7 @@ public class AFPSession extends AbstractAFPConnection {
 
 	//
 	AFPNodeInfo info(int volId, int dirId, int fileFlags, int dirFlags, int mode, String path) throws IOException {
-		var ww = new ByteWriter(1024);
+		ByteWriter ww = new ByteWriter(1024);
 		ww.writeByte(AFPConstants.CMD_GET_FILE_DIR_PARMS);
 		ww.writeByte(0);
 		ww.writeShort(volId);
@@ -153,7 +154,7 @@ public class AFPSession extends AbstractAFPConnection {
 	}
 
 	protected void openSession() throws IOException {
-		var ww = new ByteWriter(256);
+		ByteWriter ww = new ByteWriter(256);
 		ww.write(DSI_Constants.OPT_ATTN_QUANT);
 		ww.write(4);
 		ww.writeInt(rx_quantum);
@@ -161,14 +162,14 @@ public class AFPSession extends AbstractAFPConnection {
 	}
 
 	private void loginClearText(AFPClient afpClient, String auth) throws AFPException, IOException {
-		var a = afpClient.getAuthenticator().authenticate(AuthDetail.USERNAME, AuthDetail.PASSWORD);
+		Map<AuthDetail, char[]> a = afpClient.getAuthenticator().authenticate(AuthDetail.USERNAME, AuthDetail.PASSWORD);
 		if (a == null)
 			throw new AFPException(Error.AUTHENTICATION_CANCELLED);
 		if (a.isEmpty())
 			throw new AFPException(Error.REQUIRE_AUTHENTICATION,
 					String.format("Client authentication %s requires a username and/or password none has been provider.", auth));
-		var username = new String(a.get(AuthDetail.USERNAME));
-		var password = a.get(AuthDetail.PASSWORD);
+		String username = new String(a.get(AuthDetail.USERNAME));
+		char[] password = a.get(AuthDetail.PASSWORD);
 		if (password == null)
 			password = "".toCharArray();
 		if (password.length > 8)
@@ -177,7 +178,7 @@ public class AFPSession extends AbstractAFPConnection {
 							"The password supplied is %d characters long, but only %d are supported by the %s authentication method.",
 							password.length, 8, AFPConstants.UAM_STR_CLEARTEXT));
 		openSession();
-		var ww = new ByteWriter(128);
+		ByteWriter ww = new ByteWriter(128);
 		ww.writeByte(AFPConstants.CMD_LOGIN_EXT);
 		ww.writeByte(0);
 		ww.writeShort(1);
@@ -199,14 +200,14 @@ public class AFPSession extends AbstractAFPConnection {
 
 	private void loginDhx128(AFPClient afpClient, String auth, boolean useLoginExt) throws AFPException, IOException {
 		// Up to 16 characters password
-		var a = afpClient.getAuthenticator().authenticate(AuthDetail.USERNAME, AuthDetail.PASSWORD);
+		Map<AuthDetail, char[]> a = afpClient.getAuthenticator().authenticate(AuthDetail.USERNAME, AuthDetail.PASSWORD);
 		if (a == null)
 			throw new AFPException(Error.AUTHENTICATION_CANCELLED);
 		if (a.isEmpty())
 			throw new AFPException(Error.REQUIRE_AUTHENTICATION,
 					String.format("Client authentication %s requires a username and/or password none has been provider.", auth));
-		var username = new String(a.get(AuthDetail.USERNAME));
-		var password = a.get(AuthDetail.PASSWORD);
+		String username = new String(a.get(AuthDetail.USERNAME));
+		char[] password = a.get(AuthDetail.PASSWORD);
 		openSession();
 		if (password == null)
 			password = "".toCharArray();
@@ -215,7 +216,7 @@ public class AFPSession extends AbstractAFPConnection {
 					String.format(
 							"The password supplied is %d characters long, but only %d are supported by the %s authentication method.",
 							password.length, 15, AFPConstants.UAM_STR_DHX_128));
-		var ww = new ByteWriter(128);
+		ByteWriter ww = new ByteWriter(128);
 		if (useLoginExt) {
 			ww.writeByte(AFPConstants.CMD_LOGIN_EXT);
 			ww.writeByte(0);
@@ -232,11 +233,11 @@ public class AFPSession extends AbstractAFPConnection {
 		}
 		if (ww.getOffset() % 2 == 1)
 			ww.write(0);
-		var ra = new BigInteger(128, random).abs();
-		var ma = AFPConstants.DHX_G.modPow(ra, AFPConstants.DHX_P); //
-		var maBytes = Utility.keyBytes(ma);
+		BigInteger ra = new BigInteger(128, random).abs();
+		BigInteger ma = AFPConstants.DHX_G.modPow(ra, AFPConstants.DHX_P); //
+		byte[] maBytes = Utility.keyBytes(ma);
 		ww.writeBytes(maBytes);
-		var pkt = new DSI_Packet(DSI_Constants.DSI_REQUEST, DSI_Constants.CMD_COMMAND, nextId(), ww.toByteArray());
+		DSI_Packet pkt = new DSI_Packet(DSI_Constants.DSI_REQUEST, DSI_Constants.CMD_COMMAND, nextId(), ww.toByteArray());
 		try {
 			sendRecv(pkt);
 		} catch (AFPException e) {
@@ -244,45 +245,45 @@ public class AFPSession extends AbstractAFPConnection {
 				throw e;
 			}
 		}
-		var r = pkt.getReader();
+		ByteReader r = pkt.getReader();
 		sessionId = r.readShort();
-		var serverKeyBytes = new byte[16];
+		byte[] serverKeyBytes = new byte[16];
 		r.readBytes(serverKeyBytes);
 		/**
 		 * Contains the nonce (16 bytes) and the server signature (which we dont
 		 * use)
 		 */
-		var ciphertext = new byte[32];
+		byte[] ciphertext = new byte[32];
 		r.readBytes(ciphertext);
 		ww = new ByteWriter(256);
 		ww.writeByte(AFPConstants.CMD_LOGIN_CONT);
 		ww.write(0);
 		ww.writeShort(sessionId);
-		var mb = new BigInteger(1, serverKeyBytes);
-		var k = mb.modPow(ra, AFPConstants.DHX_P);
+		BigInteger mb = new BigInteger(1, serverKeyBytes);
+		BigInteger k = mb.modPow(ra, AFPConstants.DHX_P);
 		/*
 		 * FIXME: To support the Reconnect UAM, we need to stash this key
 		 * somewhere in the session data. We'll worry about doing that later,
 		 * but this would be a prime spot to do that.
 		 */
-		var c = new CAST128(Utility.keyBytes(k));
+		CAST128 c = new CAST128(Utility.keyBytes(k));
 		/* Decrypt the ciphertext from the server. */
-		var decrypted = new byte[32];
+		byte[] decrypted = new byte[32];
 		c.decrypt(ciphertext, 0, decrypted, 0, 32, AFPConstants.DHX_S2CIV);
-		var nonced = new byte[16];
+		byte[] nonced = new byte[16];
 		System.arraycopy(decrypted, 0, nonced, 0, 16);
-		var nonce = new BigInteger(nonced);
+		BigInteger nonce = new BigInteger(nonced);
 		/* Increment the nonce by 1 for sending back to the server. */
 		nonce = nonce.add(new BigInteger("1"));
 		/*
 		 * New plaintext is 16 bytes of nonce, and (up to) 64 bytes of password
 		 * (filled out with NULL values).
 		 */
-		var pstr = new String(password).getBytes();
-		var inbuf = new byte[16 + 64];
+		byte[] pstr = new String(password).getBytes();
+		byte[] inbuf = new byte[16 + 64];
 		System.arraycopy(nonced, 0, inbuf, 0, 16);
 		System.arraycopy(pstr, 0, inbuf, 16, Math.min(inbuf.length - 1 - 16, pstr.length));
-		var outbuf = new byte[16 + 64];
+		byte[] outbuf = new byte[16 + 64];
 		c.encrypt(inbuf, 0, outbuf, 0, pstr.length + 16, AFPConstants.DHX_C2SIV);
 		ww.writeBytes(outbuf);
 		try {
@@ -295,7 +296,7 @@ public class AFPSession extends AbstractAFPConnection {
 
 	private void loginGuest() throws IOException, AFPException {
 		openSession();
-		var ww = new ByteWriter(128);
+		ByteWriter ww = new ByteWriter(128);
 		ww.writeByte(AFPConstants.CMD_LOGIN);
 		ww.writePString(AFPConstants.AFP_PROTOCOL_VERSION);
 		ww.writePString(AFPConstants.UAM_STR_GUEST);

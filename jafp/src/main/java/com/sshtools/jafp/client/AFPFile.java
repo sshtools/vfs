@@ -34,7 +34,7 @@ public class AFPFile implements AFPResource<AFPFile> {
 	public AFPFile(String path, AFPVolume volume) throws IOException {
 		this.volume = volume;
 		this.path = AFPUtil.removeTrailingSeparator(path);
-		var pp = getParentPath();
+		String pp = getParentPath();
 		this.parent = pp == null ? null : new AFPFile(pp, volume);
 		info = getInfo();
 	}
@@ -52,7 +52,7 @@ public class AFPFile implements AFPResource<AFPFile> {
 	}
 
 	public Type getType() throws IOException {
-		var info = getInfo();
+		AFPNodeInfo info = getInfo();
 		if (info instanceof AFPFileInfo)
 			return Type.FILE;
 		else if (info instanceof AFPDirectoryInfo)
@@ -131,12 +131,12 @@ public class AFPFile implements AFPResource<AFPFile> {
 	@Override
 	public List<String> list() throws IOException {
 		volume.checkOpen();
-		var connection = volume.getClient().checkOut(false);
-		var names = new ArrayList<String>();
+		AFPSession connection = volume.getClient().checkOut(false);
+		ArrayList<String> names = new ArrayList<String>();
 		try {
 			int fileFlags = AFPConstants.FILE_BIT_SHORT_NAME;
 			int dirFlags = AFPConstants.DIR_BIT_SHORT_NAME;
-			for (var info : connection.enumerate(volume.getId(), ROOT_NODE_ID, fileFlags, dirFlags, AFPConstants.MODE_OLD,
+			for (AFPNodeInfo info : connection.enumerate(volume.getId(), ROOT_NODE_ID, fileFlags, dirFlags, AFPConstants.MODE_OLD,
 					AFPUtil.removeLeadingSlash(getAbsolutePath()))) {
 				names.add(info.getShortName());
 			}
@@ -149,11 +149,11 @@ public class AFPFile implements AFPResource<AFPFile> {
 	@Override
 	public List<AFPFile> listFiles() throws IOException {
 		volume.checkOpen();
-		var connection = volume.getClient().checkOut(false);
+		AFPSession connection = volume.getClient().checkOut(false);
 		List<AFPFile> names = new ArrayList<>();
 		try {
 			// TODO add more .... something goes wrong when ALL are added
-			for (var info : connection.enumerate(volume.getId(), ROOT_NODE_ID, DEFAULT_FILE_FLAGS, DEFAULT_DIR_FLAGS,
+			for (AFPNodeInfo info : connection.enumerate(volume.getId(), ROOT_NODE_ID, DEFAULT_FILE_FLAGS, DEFAULT_DIR_FLAGS,
 					AFPConstants.MODE_OLD, AFPUtil.removeLeadingSlash(getAbsolutePath()))) {
 				names.add(new AFPFile(info, this));
 			}
@@ -183,7 +183,7 @@ public class AFPFile implements AFPResource<AFPFile> {
 
 	public AFPNodeInfo getInfo() throws IOException {
 		if (this.info == null) {
-			var t = volume.getClient().checkOut(false);
+			AFPSession t = volume.getClient().checkOut(false);
 			try {
 				this.info = t.info(volume.getId(), ROOT_NODE_ID, DEFAULT_FILE_FLAGS, DEFAULT_DIR_FLAGS, AFPConstants.MODE_EXT,
 						AFPUtil.removeLeadingSlash(getAbsolutePath()));
@@ -196,7 +196,7 @@ public class AFPFile implements AFPResource<AFPFile> {
 
 	@Override
 	public int getId() throws IOException {
-		var info = getInfo();
+		AFPNodeInfo info = getInfo();
 		return info == null ? -1 : info.getNodeID();
 	}
 

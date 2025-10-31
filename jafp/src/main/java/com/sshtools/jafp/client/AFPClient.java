@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sshtools.jafp.client.AFPException.Error;
 import com.sshtools.jafp.client.AFPFile.Type;
+import com.sshtools.jafp.common.AFPBasicVolumeInfo;
 import com.sshtools.jafp.common.AFPConstants;
 import com.sshtools.jafp.common.AFPServerInfo;
 import com.sshtools.jafp.common.ObjectPool;
@@ -100,7 +101,7 @@ public class AFPClient {
 	}
 
 	public AFPVolume get(String name) throws FileNotFoundException, IOException {
-		for (var vol : list()) {
+		for (AFPVolume vol : list()) {
 			if (name.equals(vol.getName()))
 				return vol;
 		}
@@ -108,13 +109,13 @@ public class AFPClient {
 	}
 
 	public List<AFPVolume> list() throws IOException {
-		var volumes = new ArrayList<AFPVolume>();
-		var connection = pool.checkOut();
+		List<AFPVolume> volumes = new ArrayList<AFPVolume>();
+		AFPSession connection = pool.checkOut();
 		try {
-			var srv = new AFPServerParams(
+			AFPServerParams srv = new AFPServerParams(
 					connection.sendRecv(new DSI_Packet(DSI_Constants.DSI_REQUEST, DSI_Constants.CMD_COMMAND,
 							connection.nextId(), new byte[] { AFPConstants.CMD_GET_SRVR_PARMS })).getReader());
-			for (var v : srv.getVols()) {
+			for (AFPBasicVolumeInfo v : srv.getVols()) {
 				volumes.add(new AFPVolume(v, this));
 			}
 		} finally {
@@ -130,7 +131,7 @@ public class AFPClient {
 				 * Server will immediately close socket upon status, and we only we really
 				 * currently need to do this once
 				 */
-				try (var stat = new AFPStatus(createSocket())) {
+				try (AFPStatus stat = new AFPStatus(createSocket())) {
 					serverInfo = stat.getStatus();
 				}
 			}
@@ -148,7 +149,7 @@ public class AFPClient {
 	}
 
 	AFPSession checkOut(boolean requireAuth) throws IOException {
-		var was = this.requireAuth.get();
+		boolean was = this.requireAuth.get();
 		this.requireAuth.set(requireAuth);
 		try {
 			return pool.checkOut();
@@ -159,7 +160,7 @@ public class AFPClient {
 
 	protected AFPSession createConnection() throws IOException {
 		getServerInfo();
-		var authenticationMethods = new ArrayList<String>(getAuthenticationMethods());
+		List<String> authenticationMethods = new ArrayList<String>(getAuthenticationMethods());
 		if (authenticationMethods.isEmpty())
 			throw new IllegalStateException("Client has been configured to support no authentication types.");
 		if (Boolean.TRUE.equals(requireAuth.get())) {
@@ -169,8 +170,8 @@ public class AFPClient {
 
 		while (!authenticationMethods.isEmpty()) {
 			try {
-				var am = authenticationMethods.get(0);
-				var conx = new AFPSession(this, createSocket(), am, Arrays.asList(serverInfo.getUamModules()));
+				String am = authenticationMethods.get(0);
+				AFPSession conx = new AFPSession(this, createSocket(), am, Arrays.asList(serverInfo.getUamModules()));
 				LOG.info(String.format("Connection %s.", am));
 				return conx;
 			} catch (AFPException e) {
@@ -194,7 +195,7 @@ public class AFPClient {
 	}
 
 	static void dump(AFPResource<?> z, int indent) throws IOException {
-		var bb = new StringBuilder();
+		StringBuilder bb = new StringBuilder();
 		;
 		for (int i = 0; i < indent; i++)
 			bb.append(' ');
