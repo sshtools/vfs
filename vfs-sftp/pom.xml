@@ -59,24 +59,4 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-            <id>oss-snapshots</id>
-            <snapshots/>
-            <releases>  
-                <enabled>false</enabled>
-            </releases>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-            <id>oss-snapshots</id>
-            <snapshots/>
-            <releases>  
-                <enabled>false</enabled>
-            </releases>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</pluginRepository>
-	</pluginRepositories>
 </project>
